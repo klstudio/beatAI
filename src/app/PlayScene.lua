@@ -9,6 +9,8 @@ function PlayScene:onCreate()
         :start()
         :addTo(self)
     --]]
+    local bg = cc.LayerColor:create(cc.c4b(220,220,220,255)):addTo(self)
+
 end
 
 return PlayScene
