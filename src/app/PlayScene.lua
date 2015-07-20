@@ -17,8 +17,7 @@ function PlayScene:onCreate()
     self:addChild( ninjia2.sprite )
     nj.setPosition( ninjia2, cc.p( s.width/2-80, s.height/2) )
 
-    print(ninjia1.id)
-    print(ninjia2.id)
+    nj.runAnimation( ninjia1, "Idle" )
 end
 
 return PlayScene
