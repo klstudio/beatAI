@@ -10,6 +10,7 @@ function PlayScene:onCreate()
 
     local ninjia1 = nj.new(1)
     local ninjia2 = nj.new(2)
+    local ninjia3 = nj.new(2)
 
     self:addChild( ninjia1.sprite )
     nj.setPosition( ninjia1, cc.p( s.width/2-280, s.height/2) )
@@ -17,7 +18,12 @@ function PlayScene:onCreate()
     self:addChild( ninjia2.sprite )
     nj.setPosition( ninjia2, cc.p( s.width/2-80, s.height/2) )
 
+    self:addChild( ninjia3.sprite )
+    nj.setPosition( ninjia3, cc.p( s.width/2+180, s.height/2) )
+
     nj.runAnimation( ninjia1, "Idle" )
+    nj.runAnimation( ninjia2, "Run" )
+    nj.runAnimation( ninjia3, "Throw" )
 end
 
 return PlayScene

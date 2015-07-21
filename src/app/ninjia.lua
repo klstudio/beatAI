@@ -3,15 +3,17 @@ local M={}
 local cache = cc.SpriteFrameCache:getInstance()
 cache:addSpriteFrames("ninjia.plist")
 
-local animFrames_Idle = {}
 local anim = {}
 
-local function initAnimation()
+local function initAnimation(name, getframe)
+    local frames={}
     for i = 0,9 do
-        local frame = cache:getSpriteFrame( string.format("Idle__%02d.png", i) )
-        animFrames_Idle[i] = frame
+        local frame = getframe(i)
+        frames[i] = frame
+        print(frame)
     end
-    anim["Idle"] = cc.Animation:createWithSpriteFrames( animFrames_Idle, 0.3 )
+    local animation = cc.Animation:createWithSpriteFrames( frames, 0.1 )
+    anim[name] = {frames=frames, animation=animation}
 end
 
 function M.new( id )
@@ -26,10 +28,21 @@ function M.setPosition( ninjia, p )
 end
 
 function M.runAnimation( ninjia, state )
-    ninjia.sprite:runAction( ccRepeatForever:create( cc.Animate:create(anim[state]) ) )
+    ninjia.sprite:runAction( cc.RepeatForever:create( cc.Animate:create(anim[state].animation) ) )
 end
 
-
+initAnimation("Idle", function (i) 
+                        return cache:getSpriteFrame( string.format("Idle__%03d.png", i) )
+                      end
+             )
+initAnimation("Run", function (i) 
+                        return cache:getSpriteFrame( string.format("Run__%03d.png", i) )
+                     end
+             )
+initAnimation("Throw", function (i) 
+                        return cache:getSpriteFrame( string.format("Throw__%03d.png", i) )
+                       end
+             )
 return M
       
 
