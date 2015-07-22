@@ -1,6 +1,5 @@
 local M={}
 
-
 local anim = {}
 
 local cache = cc.SpriteFrameCache:getInstance()
