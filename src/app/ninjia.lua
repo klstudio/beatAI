@@ -24,7 +24,7 @@ end
 function M.new( id )
    local ninjia={sprite = cc.Sprite:createWithSpriteFrame( cache:getSpriteFrame("Idle__001.png") ),
                  id = id,
-                 state = "Idle_r",
+                 state = "Idle",
                  v = cc.p(0, 0),  -- velocity
                  a = cc.p(0,0),   -- acceleration
                  orientation = right,
