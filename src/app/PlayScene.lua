@@ -25,10 +25,12 @@ function PlayScene:onCreate()
     self:addChild( ninjia4.sprite )
     nj.setPosition( ninjia4, cc.p( s.width/2+180, s.height/2) )
 
-    nj.runAnimation( ninjia1, "Idle" )
-    nj.runAnimation( ninjia2, "Run" )
-    nj.runAnimation( ninjia3, "Throw" )
-    nj.runAnimation( ninjia4, "Dash" )
+    nj.setState( ninjia1, "Idle" )
+    nj.setOrientation( ninjia1, "left")
+    nj.setState( ninjia2, "Run" )
+    nj.setState( ninjia3, "Throw" )
+    nj.setOrientation( ninjia3, "left")
+    nj.setState( ninjia4, "Dash" )
 end
 
 return PlayScene
