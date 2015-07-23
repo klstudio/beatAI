@@ -1,0 +1,6 @@
+* investigating AI technique and integration
+
+- basic map and ai architecture
+- loading ai and level scripts
+- demo ninjia sprite following ai script
+
