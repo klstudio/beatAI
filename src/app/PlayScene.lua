@@ -2,6 +2,12 @@ local nj=require "app.ninjia"
 
 local PlayScene = class("PlayScene", cc.load("mvc").ViewBase)
 
+local scheduler = cc.Director:getInstance():getScheduler()
+
+function PlayScene:step(dt)
+    return self
+end
+
 function PlayScene:onCreate()
     local s = cc.Director:getInstance():getWinSize()
 
@@ -31,6 +37,9 @@ function PlayScene:onCreate()
     nj.setState( self.ninjia3, "Throw" )
     nj.setOrientation( self.ninjia3, "left")
     nj.setState( self.ninjia4, "Dash" )
+
+-- to do: unschedule when exit
+    self:scheduleUpdate(handler(self, self.step))
 end
 
 return PlayScene
