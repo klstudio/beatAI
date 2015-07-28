@@ -44,6 +44,9 @@ function M.setState(ninjia, state)
     runAnimation( ninjia, state )
 end
 
+function M.physicsStep(ninjia)
+end
+
 --just change face orientation. doesn't touch velocity or acceleration
 function M.setOrientation(ninjia, o)
     if o == "left" then
