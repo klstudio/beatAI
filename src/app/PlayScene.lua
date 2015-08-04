@@ -1,16 +1,12 @@
 local nj=require "app.ninjia"
+local physics=require "app.physics"
 
 local PlayScene = class("PlayScene", cc.load("mvc").ViewBase)
 
 --local scheduler = cc.Director:getInstance():getScheduler()
 
-function PlayScene:physicsStep(dt)
-    local ninjia = self.ninjia[1]
-
-end
-
 function PlayScene:step(dt)
-    self:physicsStep(dt)
+    physics.step(this, dt)
     return self
 end
 
@@ -29,6 +25,7 @@ function PlayScene:onCreate()
     -- background
     cc.LayerColor:create(cc.c4b(50,50,50,255)):addTo(self)
     self.ninjia = {}
+    self.solidBox = {}
 
     -- To Do: release sprite
     self.ninjia[1] = nj.new(1)
@@ -54,6 +51,9 @@ function PlayScene:onCreate()
     nj.setState( self.ninjia[3], "Throw" )
     nj.setOrientation( self.ninjia[3], "left")
     nj.setState( self.ninjia[4], "Dash" )
+    
+    
+    self.solidBox[1] = { min = cc.p(0,0), max = cc.p(0, s.height/2) }
 
     -- to do: unschedule when exit
     self:scheduleUpdate( handler(self, self.step) )

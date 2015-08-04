@@ -44,8 +44,6 @@ function M.setState(ninjia, state)
     runAnimation( ninjia, state )
 end
 
-function M.physicsStep(ninjia)
-end
 
 --just change face orientation. doesn't touch velocity or acceleration
 function M.setOrientation(ninjia, o)
@@ -55,6 +53,12 @@ function M.setOrientation(ninjia, o)
         ninjia.sprite:setFlipX(false)
     end
     ninjia.orientation = o
+end
+
+function M.jump(ninjia)
+    ninjia.v = cc.p(0, 3)   -- per frame  
+    ninjia.a = cc.p(0, -0.2) 
+    M.setState(ninjia, "Jump")
 end
 
 initAnimation("Idle", function (i) 
@@ -73,6 +77,11 @@ initAnimation("Dash", function (i)
                         return cache:getSpriteFrame( string.format("Run__%03d.png", i) )
                        end,
                0.05
+             )
+initAnimation("Jump", function (i) 
+                        return cache:getSpriteFrame( string.format("Jump__%03d.png", i) )
+                       end,
+               0.2
              )
 return M
       
