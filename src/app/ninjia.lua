@@ -24,8 +24,12 @@ function M.new( id )
    local ninjia={sprite = cc.Sprite:createWithSpriteFrame( cache:getSpriteFrame("Idle__001.png") ),
                  id = id,
                  state = "Idle",
-                 v = cc.p(0, 0),  -- velocity
-                 a = cc.p(0,0),   -- acceleration
+                 v = {x=0, y=0},  -- velocity
+                 a = {x=0, y=0},   -- acceleration
+                 -- local AABB
+                 aabb = { min = { x=, y= },     
+                          max = { x=, y= },
+                        }
                  orientation = right,
                 }
    return ninjia
@@ -56,9 +60,22 @@ function M.setOrientation(ninjia, o)
 end
 
 function M.jump(ninjia)
-    ninjia.v = cc.p(0, 3)   -- per frame  
-    ninjia.a = cc.p(0, -0.2) 
+    ninjia.v.x, ninjia.v.y = 0, 4   -- per frame   
+    ninjia.a.x, ninjia.a.y = 0, -0.1
     M.setState(ninjia, "Jump")
+end
+
+-- update ninjia position
+function M.step(ninjia, num_frame)
+    local px, py = ninjia.sprite:getPosition()
+
+    px = px + ninjia.v.x
+    py = py + ninjia.v.y
+
+    ninjia.v.x = ninjia.v.x + ninjia.a.x
+    ninjia.v.y = ninjia.v.y + ninjia.a.y
+
+    M.setPosition(ninjia, cc.p(px, py) )
 end
 
 initAnimation("Idle", function (i) 

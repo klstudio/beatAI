@@ -6,7 +6,13 @@ local PlayScene = class("PlayScene", cc.load("mvc").ViewBase)
 --local scheduler = cc.Director:getInstance():getScheduler()
 
 function PlayScene:step(dt)
-    physics.step(this, dt)
+    --to do: predict collision step
+    
+    
+    physics.step(self, dt)
+    
+    --to do: ai step
+    
     return self
 end
 
@@ -52,7 +58,7 @@ function PlayScene:onCreate()
     nj.setOrientation( self.ninjia[3], "left")
     nj.setState( self.ninjia[4], "Dash" )
     
-    
+    nj.jump(self.ninjia[1])
     self.solidBox[1] = { min = cc.p(0,0), max = cc.p(0, s.height/2) }
 
     -- to do: unschedule when exit
