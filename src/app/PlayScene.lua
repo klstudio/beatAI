@@ -5,11 +5,11 @@ local PlayScene = class("PlayScene", cc.load("mvc").ViewBase)
 
 --local scheduler = cc.Director:getInstance():getScheduler()
 
-function PlayScene:step(dt)
+function PlayScene:runFrame(dt)
     --to do: predict collision step
     
     
-    physics.step(self, dt)
+    physics.runFrame(self, dt)
     
     --to do: ai step
     

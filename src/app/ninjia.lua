@@ -65,15 +65,16 @@ function M.jump(ninjia)
     M.setState(ninjia, "Jump")
 end
 
--- update ninjia position
-function M.step(ninjia, num_frame)
+-- move ninjia for n frame based on current p, v, a
+function M.move(ninjia, n)
     local px, py = ninjia.sprite:getPosition()
+    n = n or 1
 
-    px = px + ninjia.v.x
-    py = py + ninjia.v.y
+    px = px + ninjia.v.x * n
+    py = py + ninjia.v.y * n
 
-    ninjia.v.x = ninjia.v.x + ninjia.a.x
-    ninjia.v.y = ninjia.v.y + ninjia.a.y
+    ninjia.v.x = ninjia.v.x + ninjia.a.x * n
+    ninjia.v.y = ninjia.v.y + ninjia.a.y * n
 
     M.setPosition(ninjia, cc.p(px, py) )
 end
