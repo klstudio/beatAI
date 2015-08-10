@@ -1,4 +1,5 @@
 local M={}
+local physics=require "app.physics"
 
 local anim = {}
 
@@ -79,6 +80,11 @@ function M.move(ninjia, n)
     M.setPosition(ninjia, cc.p(px, py) )
 end
 
+-- AI logic
+function M.think(ninjia, world, dt)
+end
+
+-- the following code get run once when required
 initAnimation("Idle", function (i) 
                         return cache:getSpriteFrame( string.format("Idle__%03d.png", i) )
                       end

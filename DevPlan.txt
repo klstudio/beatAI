@@ -1,17 +1,21 @@
+Doing:
+* static collision test first
 * collision detection and simple behaviour tree
 * simple map run to a point -> jump -> run to treasure box
 * AI: avoid collision of dynamic star
 
-
-- investigating AI technique and integration
+To Do:
+- dynamic collision test
 - basic map and ai architecture
 - loading ai and level scripts
 - demo ninjia sprite following ai script
 
 
+Done:
+-- investigating AI technique and integration
 
 
-—————————————————————————————————
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 design decision:
 using AABB separating axis algorithm for dynamic collision test
 evaluate/estimate collision in future 5 frames

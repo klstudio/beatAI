@@ -5,13 +5,14 @@ local PlayScene = class("PlayScene", cc.load("mvc").ViewBase)
 
 --local scheduler = cc.Director:getInstance():getScheduler()
 
+-- main loop of game play --
 function PlayScene:runFrame(dt)
-    --to do: predict collision step
-    
-    
-    physics.runFrame(self, dt)
-    
-    --to do: ai step
+    -- like doom 3 code game loop is AI driven
+
+    --player think first
+    nj.think(self.ninjia[1], self, dt)
+
+    --other enities
     
     return self
 end
