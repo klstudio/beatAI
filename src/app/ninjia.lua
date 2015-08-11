@@ -25,13 +25,19 @@ function M.new( id )
    local ninjia={sprite = cc.Sprite:createWithSpriteFrame( cache:getSpriteFrame("Idle__001.png") ),
                  id = id,
                  state = "Idle",
+                 orientation = right,
+
+                 -- physics
                  v = {x=0, y=0},  -- velocity
                  a = {x=0, y=0},   -- acceleration
                  -- local AABB
                  aabb = { min = { x=, y= },     
                           max = { x=, y= },
                         }
-                 orientation = right,
+                 -- behavior tree
+                 bt = { root = {},
+                        lastNode = {},
+                      }
                 }
    return ninjia
 end
@@ -80,8 +86,30 @@ function M.move(ninjia, n)
     M.setPosition(ninjia, cc.p(px, py) )
 end
 
+
+
 -- AI logic
+function M.ninjiaAiActions(ninjia, world)
+    function WalkTo(ninjia, p)
+
+    end
+
+    return { walkTo=WalkTo }
+end
+
 function M.think(ninjia, world, dt)
+    --To Do: behavior tree
+
+    --All sorts of events check
+        --collision test
+    
+
+    -- if no events to handle, resume last node behavior tree
+
+    -- if there's event, abort last and evaluate the tree from beginnning
+
+    -- for now,
+    M.walkTo(ninjia, position)
 end
 
 -- the following code get run once when required
