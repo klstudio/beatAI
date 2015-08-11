@@ -89,12 +89,12 @@ end
 
 
 -- AI logic
-function M.ninjiaAiActions(ninjia, world)
-    function WalkTo(ninjia, p)
-
+function M.generateActions(ninjia, world)
+    function _runTo(ninjia, p)
+        print("runTo: ninjia id", ninjia.id)
     end
 
-    return { walkTo=WalkTo }
+    return { runTo=_WalkTo }
 end
 
 function M.think(ninjia, world, dt)
