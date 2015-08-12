@@ -16,7 +16,7 @@ local function initAnimation(name, getframe, interval)
         frames[i] = frame
         --print(frame)
     end
-    
+
     local animation = cc.Animation:createWithSpriteFrames( frames, interval )
     anim[name] = {frames=frames, animation=animation}   -- table need be explicitly created
 end
@@ -32,7 +32,7 @@ function M.new( id )
                  v = {x=0, y=0},  -- velocity
                  a = {x=0, y=0},   -- acceleration
                  -- local AABB
-                 --[[aabb = { min = { x=, y= },     
+                 --[[aabb = { min = { x=, y= },
                           max = { x=, y= },
                         }
                  --]]
@@ -67,13 +67,13 @@ function M.setOrientation(ninjia, o)
 end
 
 function M.jump(ninjia)
-    ninjia.v.x, ninjia.v.y = 0, 4   -- per frame   
+    ninjia.v.x, ninjia.v.y = 0, 4   -- per frame
     ninjia.a.x, ninjia.a.y = 0, -0.1
     M.setState(ninjia, "Jump")
 end
 
 -- move ninjia for n frame based on current p, v, a
-local function updatePhysics(ninjia, n)
+function M.updatePhysics(ninjia, n)
     local px, py = ninjia.sprite:getPosition()
     n = n or 1
 
@@ -92,8 +92,10 @@ function M.run(ninjia, direction)
     local o
     if drection.x>0 then
         o = "right";
-    else if direction.x < 0 then
+    elseif direction.x < 0 then
         o = "left";
+	else
+		print("cannot determine orientation")
     end
     M.setOrientation(ninjia, o)
 end
@@ -104,56 +106,6 @@ function M.stopRun(ninjia)
     M.setState(ninjia, "Idle")
 end
 
-
--- AI logic
--- position {x=, y=}
--- action return value 0 running -1 failed 1 success
-local function containsPoint(bounds, p)
-    if p.x >= bounds.lb.x and p.y >= bounds.lb.y 
-       and p.x <= bounds.rt.x and p.y <= bounds.rt.y then
-       return true
-    end
-    return false 
-end
-
-local function reachedPosition(ninjia, pos)
-    local px, py = ninjia.sprite:getPosition()
-    local bounds = { lb = { x = px-30, y = py-30 },
-                     rt = { x = px+30, y = py+30 },
-                   }
-    return containsPoint(bounds, pos)
-end
-
-function M.generateActions(ninjia, world)
-    function _runTo(ninjia, pos)
-        print("runTo: ninjia id", ninjia.id)
-        local ninjia_px, ninjia_py = ninjia.sprite:getPosition()
-        if reachedPosition(ninjia, pos) then
-            --stop run
-            M.stopRun(ninjia)
-            return bt.Success
-        end
-        --if not in run state or direction is not the same, set running towards position
-        local direction = { x = pos.x - ninjia_px, y = pos.y-ninjia_py}
-        local o
-
-        if drection.x>0 then
-            o = "right";
-        else if direction.x < 0 then
-            o = "left";
-        end
-
-        if ninjia.state ~= "Run" or (ninjia.state == "Run" and ninjia.orientation != o) then
-            M.run(ninjia, direction)
-        end
-
-        return bt.Running
-        -- there's no path finding so _runTo never returns Failure
-    end
-
-    return { runTo=_runTo }
-end
-
 function M.think(ninjia, world, dt)
     --All sorts of events check
         --collision test
@@ -162,32 +114,30 @@ function M.think(ninjia, world, dt)
     bt.tick(ninjia.bt_tree)
 
     --update ninjia physics
-    updatePhysics(ninjia, 1)
+    M.updatePhysics(ninjia, 1)
 end
 
 -- the following code get run once when required
-initAnimation("Idle", function (i) 
+initAnimation("Idle", function (i)
                         return cache:getSpriteFrame( string.format("Idle__%03d.png", i) )
                       end
              )
-initAnimation("Run", function (i) 
+initAnimation("Run", function (i)
                         return cache:getSpriteFrame( string.format("Run__%03d.png", i) )
                      end
              )
-initAnimation("Throw", function (i) 
+initAnimation("Throw", function (i)
                         return cache:getSpriteFrame( string.format("Throw__%03d.png", i) )
                        end
              )
-initAnimation("Dash", function (i) 
+initAnimation("Dash", function (i)
                         return cache:getSpriteFrame( string.format("Run__%03d.png", i) )
                        end,
                0.05
              )
-initAnimation("Jump", function (i) 
+initAnimation("Jump", function (i)
                         return cache:getSpriteFrame( string.format("Jump__%03d.png", i) )
                        end,
                0.2
              )
 return M
-      
-

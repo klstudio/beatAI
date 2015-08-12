@@ -1,39 +1,48 @@
-local M={ 
-            Success = 1,
-            Failure = -1,
-            Running = 0,
-            Invalid = -2,
+local M={
+            state = {
+                        Success = 1,
+                        Failure = -1,
+                        Running = 0,
+                        Reset = -2,
+                    },
         }
+local state= M.state
 
 --[[ node structure
 node = {
            type = leaf or
-           action = function or nil
            child = nil
-           state = Success or Failure or Running or invalid
+           tick = tick function
+           state = Success or Failure or Running or Reset
+           action = function or nil
+           stop = function or nil
        }
---]] 
+--]]
 local function tickLeaf( node )
+    if node.state ~= state.Reset or node.state ~= state.Running then
+        return state.Failure
+    end
+
     if action == nil then
         print("leaf node ", node, " 's action is nil")
         return false
-    en
+    end
     node.state =  node.action()
     return node.state
 end
 
 function M.tick( node )
-    if node.type == leaf then
-        return M.tickLeaf(node)
-    end 
+    return node.tick(node)
 end
 
-function M.createLeafNode(action)
+function M.createLeafNode(action, stopAction)
     local node = {}
     node.type = leaf
+    node.tick = tickLeaf
     node.child = nil
-    node.state = invalid
+    node.state = state.Reset
     node.action = action
+    node.stop = stopAction
     return node
 end
 
