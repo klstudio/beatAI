@@ -1,4 +1,9 @@
-local M={}
+local M={ 
+            Success = 1,
+            Failure = -1,
+            Running = 0,
+            Invalid = -2,
+        }
 
 --[[ node structure
 node = {
@@ -12,8 +17,9 @@ local function tickLeaf( node )
     if action == nil then
         print("leaf node ", node, " 's action is nil")
         return false
-    end
-    return node.action()
+    en
+    node.state =  node.action()
+    return node.state
 end
 
 function M.tick( node )
@@ -46,3 +52,4 @@ return M
 
 --Three Ways of Cultivating Game AI
 --validate node
+

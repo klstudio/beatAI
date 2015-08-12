@@ -7,7 +7,7 @@ function M.runFrame(world, dt)
     --to do dynamic collision detection
 
     --update ninjia
-    nj.move(ninjia, 1)  -- 1 frame
+    --nj.move(ninjia, 1)  -- 1 frame
 
     --static collision detection for now
 

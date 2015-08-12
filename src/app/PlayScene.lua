@@ -1,5 +1,6 @@
 local nj=require "app.ninjia"
 local physics=require "app.physics"
+local bt=require "app.BehaviorTree"
 
 local PlayScene = class("PlayScene", cc.load("mvc").ViewBase)
 
@@ -20,6 +21,9 @@ end
 -- based on CCNode
 function PlayScene:onEnter()
     print("playscene onEnter ... ")
+    local ninjia_actions = nj.generateActions(self.ninjia[1], self)
+    local root = bt.createLeafNode(ninjia_actions.runTo)
+    self.ninjia[1].bt_root = root
 end
 
 function PlayScene:onExit()
@@ -36,32 +40,13 @@ function PlayScene:onCreate()
 
     -- To Do: release sprite
     self.ninjia[1] = nj.new(1)
-    self.ninjia[2] = nj.new(2)
-    self.ninjia[3] = nj.new(3)
-    self.ninjia[4] = nj.new(4)
 
     self:addChild( self.ninjia[1].sprite )
     nj.setPosition( self.ninjia[1], cc.p( s.width/2-280, s.height/2) )
 
-    self:addChild( self.ninjia[2].sprite )
-    nj.setPosition( self.ninjia[2], cc.p( s.width/2-80, s.height/2) )
-
-    self:addChild( self.ninjia[3].sprite )
-    nj.setPosition( self.ninjia[3], cc.p( s.width/2+80, s.height/2) )
-
-    self:addChild( self.ninjia[4].sprite )
-    nj.setPosition( self.ninjia[4], cc.p( s.width/2+180, s.height/2) )
-
     nj.setState( self.ninjia[1], "Idle" )
-    nj.setOrientation( self.ninjia[1], "left")
-    nj.setState( self.ninjia[2], "Run" )
-    nj.setState( self.ninjia[3], "Throw" )
-    nj.setOrientation( self.ninjia[3], "left")
-    nj.setState( self.ninjia[4], "Dash" )
+    nj.setOrientation( self.ninjia[1], "right")
     
-    nj.jump(self.ninjia[1])
-    self.solidBox[1] = { min = cc.p(0,0), max = cc.p(0, s.height/2) }
-
     -- to do: unschedule when exit
     self:scheduleUpdate( handler(self, self.step) )
     self.frameNum = 0
