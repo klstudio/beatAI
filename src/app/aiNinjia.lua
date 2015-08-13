@@ -26,7 +26,7 @@ end
 function M.getAction(action, param)
     local ninjia = param.ninjia
 
-    function _runTo()
+    local function _runTo()
         print("runTo: ninjia id", ninjia.id)
         local pos = param.position
         local ninjia_px, ninjia_py = ninjia.sprite:getPosition()
@@ -36,19 +36,10 @@ function M.getAction(action, param)
             nj.stopRun(ninjia)
             return bt.state.Success
         end
+
         --if not in run state or direction is not the same, set running towards position
-        local direction = { x = pos.x - ninjia_px, y = pos.y-ninjia_py}
-        local o
-
-        if drection.x>0 then
-            o = "right";
-        elseif direction.x < 0 then
-            o = "left";
-		else
-			print("cannot determine orientation")
-        end
-
-        if ninjia.state ~= "Run" or (ninjia.state == "Run" and ninjia.orientation ~= o) then
+        if ninjia.state ~= "Run"  then
+            local direction = { x = pos.x - ninjia_px, y = pos.y-ninjia_py}
             nj.run(ninjia, direction)
         end
 
@@ -56,7 +47,7 @@ function M.getAction(action, param)
         -- there's no path finding so _runTo never returns Failure
     end
 
-    function _stopRunTo()
+    local function _stopRunTo()
         nj.stopRun(ninjia)
     end
 

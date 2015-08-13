@@ -18,12 +18,21 @@ node = {
            stop = function or nil
        }
 --]]
+local function printNode(node)
+    print("node = { ")
+    print("        type = ", node.type)
+    print("        state = ", node.state)
+    print("       }")
+end
+
 local function tickLeaf( node )
-    if node.state ~= state.Reset or node.state ~= state.Running then
+    --print("--tickLeaf")
+    --printNode(node)
+    if node.state ~= state.Reset and node.state ~= state.Running then
         return state.Failure
     end
 
-    if action == nil then
+    if node.action == nil then
         print("leaf node ", node, " 's action is nil")
         return false
     end
@@ -31,19 +40,15 @@ local function tickLeaf( node )
     return node.state
 end
 
-function M.tick( node )
-    return node.tick(node)
+local function tickSequence( node )
+    if node.state == state.Reset then
+    elseif node.state == state.Running then
+    end
 end
 
-function M.createLeafNode(action, stopAction)
-    local node = {}
-    node.type = leaf
-    node.tick = tickLeaf
-    node.child = nil
-    node.state = state.Reset
-    node.action = action
-    node.stop = stopAction
-    return node
+function M.tick( node )
+    --print("tick node ", node)
+    return node.tick(node)
 end
 
 function M.addNode(parent, node)
@@ -53,9 +58,42 @@ function M.addNode(parent, node)
     end
     local c = parent.child
     c[#c+1] = node
+    --To Do: reset child node
 
     return parent
 end
+
+function M.createLeafNode(action, stopAction)
+    local node = {}
+    node.type = "leaf"
+    node.tick = tickLeaf
+    node.child = nil
+    node.state = state.Reset
+    node.action = action
+    node.stop = stopAction
+    print("createLeafNode", action, stopAction)
+    return node
+end
+
+function M.createComposite(type, ...)
+    local node = {}
+    node.type = type
+    node.child={}
+    node.state = state.Reset
+    node.action = nil
+    node.stop = nil
+
+    if type == "Sequence" then
+        node.tick = tickSequence
+    end
+
+    for i, v in ipairs{...} do
+        M.addNode(node, v)
+    end
+
+    return node
+end
+
 
 return M
 

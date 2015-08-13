@@ -26,7 +26,7 @@ function PlayScene:onEnter()
     -- attach behavior tree to ninjia
     local s = cc.Director:getInstance():getWinSize()
     local param={ ninjia=self.ninjia[1], wolrd=self, position = {x=s.width - 120, y= s.height/2 } } 
-    local runTo, stopRunTo = nj.getAction("runTo", param)
+    local runTo, stopRunTo = aiNinjia.getAction("runTo", param)
 
     self.ninjia[1].bt_root = bt.createLeafNode(runTo, stopRunTo)
 end
@@ -50,11 +50,12 @@ function PlayScene:onCreate()
     self:addChild( self.ninjia[1].sprite )
     nj.setPosition( self.ninjia[1], cc.p( s.width/2-280, s.height/2) )
 
+    --nj.setState( self.ninjia[1], "Idle" )
     nj.setState( self.ninjia[1], "Idle" )
     nj.setOrientation( self.ninjia[1], "right")
     
     -- to do: unschedule when exit
-    self:scheduleUpdate( handler(self, self.step) )
+    self:scheduleUpdate( handler(self, self.runFrame) )
     self.frameNum = 0
 end
 

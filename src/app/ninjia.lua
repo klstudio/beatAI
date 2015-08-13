@@ -18,6 +18,8 @@ local function initAnimation(name, getframe, interval)
     end
 
     local animation = cc.Animation:createWithSpriteFrames( frames, interval )
+    --To Do: release at some point
+    animation:retain()
     anim[name] = {frames=frames, animation=animation}   -- table need be explicitly created
 end
 
@@ -29,6 +31,7 @@ function M.new( id )
                  orientation = right,
 
                  -- physics
+                 speed = 0,
                  v = {x=0, y=0},  -- velocity
                  a = {x=0, y=0},   -- acceleration
                  -- local AABB
@@ -52,7 +55,9 @@ end
 
 function M.setState(ninjia, state)
     ninjia.sprite:stopAllActions()
+    print("setState: ninjia ", ninjia.id, " ", state)
     runAnimation( ninjia, state )
+    ninjia.state = state
 end
 
 
@@ -67,7 +72,8 @@ function M.setOrientation(ninjia, o)
 end
 
 function M.jump(ninjia)
-    ninjia.v.x, ninjia.v.y = 0, 4   -- per frame
+    ninjia.speed = 4
+    ninjia.v.x, ninjia.v.y = 0, ninjia.speed   -- per frame
     ninjia.a.x, ninjia.a.y = 0, -0.1
     M.setState(ninjia, "Jump")
 end
@@ -90,7 +96,7 @@ end
 function M.run(ninjia, direction)
     --only left right for now
     local o
-    if drection.x>0 then
+    if direction.x>0 then
         o = "right";
     elseif direction.x < 0 then
         o = "left";
@@ -98,11 +104,21 @@ function M.run(ninjia, direction)
 		print("cannot determine orientation")
     end
     M.setOrientation(ninjia, o)
+    ninjia.speed = 4
+    ninjia.a.x = 0
+    ninjia.a.y = 0
+    if o == "right" then
+        ninjia.v.x = ninjia.speed
+    elseif o == "left" then
+        ninjia.v.x = -ninjia.speed
+    end
+    M.setState(ninjia, "Run")
 end
 
 function M.stopRun(ninjia)
     ninjia.v.x, ninjia.v.y = 0, 0
     ninjia.a.x, ninjia.a.y = 0, 0
+    ninjia.speed = 0
     M.setState(ninjia, "Idle")
 end
 
@@ -111,7 +127,8 @@ function M.think(ninjia, world, dt)
         --collision test
     --evaluate btree
     -- if there's event, abort last and evaluate the tree from beginnning
-    bt.tick(ninjia.bt_tree)
+    --print("ninjia - think")
+    bt.tick(ninjia.bt_root)
 
     --update ninjia physics
     M.updatePhysics(ninjia, 1)
