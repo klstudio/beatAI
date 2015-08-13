@@ -1,6 +1,6 @@
 local M={}
 local nj=require "app.ninjia"
-local bt=require "app.BehaviorTree"
+--local bt=require "app.BehaviorTree"
 
 -- AI logic
 -- position {x=, y=}
@@ -27,23 +27,24 @@ function M.getAction(action, param)
     local ninjia = param.ninjia
 
     local function _runTo()
-        print("runTo: ninjia id", ninjia.id)
+        --print("runTo: ninjia id", ninjia.id)
         local pos = param.position
         local ninjia_px, ninjia_py = ninjia.sprite:getPosition()
 
         if reachedPosition(ninjia, pos) then
             --stop run
             nj.stopRun(ninjia)
-            return bt.state.Success
+            return "Success"
         end
 
         --if not in run state or direction is not the same, set running towards position
         if ninjia.state ~= "Run"  then
+            print("start run to ", pos.x, ", ", pos.y)
             local direction = { x = pos.x - ninjia_px, y = pos.y-ninjia_py}
             nj.run(ninjia, direction)
         end
 
-        return bt.state.Running
+        return "Running"
         -- there's no path finding so _runTo never returns Failure
     end
 

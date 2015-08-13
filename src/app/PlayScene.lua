@@ -27,8 +27,18 @@ function PlayScene:onEnter()
     local s = cc.Director:getInstance():getWinSize()
     local param={ ninjia=self.ninjia[1], wolrd=self, position = {x=s.width - 120, y= s.height/2 } } 
     local runTo, stopRunTo = aiNinjia.getAction("runTo", param)
+    local runRightNode = bt.createLeafNode(runTo, stopRunTo)
+    runRightNode.name = "run right to"
 
-    self.ninjia[1].bt_root = bt.createLeafNode(runTo, stopRunTo)
+    local param2={ ninjia=self.ninjia[1], wolrd=self, position = {x=100, y= s.height/2 } } 
+    local runBack, stopRunBack = aiNinjia.getAction("runTo", param2)
+    local runBackNode = bt.createLeafNode(runBack, stopRunBack)
+    runBackNode.name = "run left to"
+
+    local seqNode = bt.createComposite("Sequence", runRightNode, runBackNode)
+
+    self.ninjia[1].bt_root = seqNode
+    -- end of create behavior tree
 end
 
 function PlayScene:onExit()

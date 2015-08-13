@@ -104,7 +104,7 @@ function M.run(ninjia, direction)
 		print("cannot determine orientation")
     end
     M.setOrientation(ninjia, o)
-    ninjia.speed = 4
+    ninjia.speed = 3
     ninjia.a.x = 0
     ninjia.a.y = 0
     if o == "right" then

@@ -1,25 +1,22 @@
-local M={
-            state = {
-                        Success = 1,
-                        Failure = -1,
-                        Running = 0,
-                        Reset = -2,
-                    },
-        }
-local state= M.state
+local M={ }
 
 --[[ node structure
+-- node returns "Success" or "Failure" or "Running"
 node = {
-           type = leaf or
-           child = nil
+           type = "leaf" or "Sequence"
+           name = nil
            tick = tick function
-           state = Success or Failure or Running or Reset
+           child = nil
+           state = "Active" or "Inactive"
            action = function or nil
            stop = function or nil
+           runningChild = nil  -- last running child index
        }
 --]]
+
 local function printNode(node)
     print("node = { ")
+    print("        name = ", node.name)
     print("        type = ", node.type)
     print("        state = ", node.state)
     print("       }")
@@ -28,22 +25,46 @@ end
 local function tickLeaf( node )
     --print("--tickLeaf")
     --printNode(node)
-    if node.state ~= state.Reset and node.state ~= state.Running then
-        return state.Failure
+    assert(node.action ~= nil)
+
+    local ret = node.action()
+
+    if  ret == "Running"then
+        node.state = "Active"
+    else 
+        node.state = "Inactive"
     end
 
-    if node.action == nil then
-        print("leaf node ", node, " 's action is nil")
-        return false
-    end
-    node.state =  node.action()
-    return node.state
+    return ret 
 end
 
 local function tickSequence( node )
-    if node.state == state.Reset then
-    elseif node.state == state.Running then
+    local i 
+    local ret = "Success"
+
+    if node.state == "Inactive" then
+        -- start this subtree
+        assert(node.runningChild == nil)
+        i = 1
+    elseif node.state == "Active" then
+        i = node.runningChild
     end
+
+    while node.child[i] and ret == "Success" do
+        --print("tick node child ", i)
+        ret = node.child[i].tick( node.child[i] )
+        i = i + 1
+    end
+
+    if ret == "Running" then
+        node.state = "Active"
+        node.runningChild = i - 1
+    else
+        node.state = "Inactive"
+        node.runningChild = nil
+    end
+
+    return ret
 end
 
 function M.tick( node )
@@ -58,7 +79,6 @@ function M.addNode(parent, node)
     end
     local c = parent.child
     c[#c+1] = node
-    --To Do: reset child node
 
     return parent
 end
@@ -68,7 +88,8 @@ function M.createLeafNode(action, stopAction)
     node.type = "leaf"
     node.tick = tickLeaf
     node.child = nil
-    node.state = state.Reset
+    node.runningChild = nil
+    node.state = "Inactive"
     node.action = action
     node.stop = stopAction
     print("createLeafNode", action, stopAction)
@@ -78,13 +99,15 @@ end
 function M.createComposite(type, ...)
     local node = {}
     node.type = type
+    node.runningChild = nil
     node.child={}
-    node.state = state.Reset
+    node.state = "Inactive"
     node.action = nil
     node.stop = nil
 
     if type == "Sequence" then
         node.tick = tickSequence
+    elseif type == "Priority" then
     end
 
     for i, v in ipairs{...} do
@@ -96,7 +119,4 @@ end
 
 
 return M
-
---Three Ways of Cultivating Game AI
---validate node
 
