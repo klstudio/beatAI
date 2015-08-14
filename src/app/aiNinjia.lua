@@ -25,6 +25,7 @@ end
 -- param = {ninjia=, world=}
 function M.getAction(action, param)
     local ninjia = param.ninjia
+    local jmpOriginY = nil
 
     local function _runTo()
         --print("runTo: ninjia id", ninjia.id)
@@ -39,7 +40,7 @@ function M.getAction(action, param)
 
         --if not in run state or direction is not the same, set running towards position
         if ninjia.state ~= "Run"  then
-            print("start run to ", pos.x, ", ", pos.y)
+            --print("start run to ", pos.x, ", ", pos.y)
             local direction = { x = pos.x - ninjia_px, y = pos.y-ninjia_py}
             nj.run(ninjia, direction)
         end
@@ -52,8 +53,30 @@ function M.getAction(action, param)
         nj.stopRun(ninjia)
     end
 
+    local function _jumpOver()
+        local ninjia_px, ninjia_py = ninjia.sprite:getPosition()
+        if ninjia.state == "Jump" and jmpOriginY and ninjia_py <= jmpOriginY then
+            nj.stopJumpOver(ninjia)
+            return "Success"
+        end
+
+        if ninjia.state ~= "Jump" then
+            -- start to jump
+            jmpOriginY = ninjia_py
+            nj.jumpOver(ninjia)
+        end
+        
+        return "Running"
+    end
+
+    local function _stopJumpOver()
+        nj.stopJumpOver(ninjia)
+    end
+
     if action == "runTo" then
         return _runTo, _stopRunTo
+    elseif action == "jumpOver" then
+        return _jumpOver, _stopJumpOver
     end
 end
 

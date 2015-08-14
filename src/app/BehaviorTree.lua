@@ -10,7 +10,7 @@ node = {
            child = nil
            state = "Active" or "Inactive"
            action = function or nil
-           stop = function or nil
+           stop = function or nil   stop action
            activeChild = nil  -- last active(running) child index
        }
 --]]
@@ -69,9 +69,13 @@ local function tickSelector( node )
 
     --validate first
     while node.child[i] do
+        --print("try to validate ", i)
         if validate( node.child[i] ) then
+            --print("ch ", i, " is validated")
             validatedChild = node.child[i]
+            break
         end
+        i = i + 1
     end
 
     if validatedChild then

@@ -73,8 +73,13 @@ end
 
 function M.jump(ninjia)
     ninjia.speed = 4
-    ninjia.v.x, ninjia.v.y = 0, ninjia.speed   -- per frame
+    if ninjia.orientation == "right" then
+        ninjia.v.x, ninjia.v.y = 0, ninjia.speed   -- per frame
+    else
+        ninjia.v.x, ninjia.v.y = 0, -ninjia.speed   -- per frame
+    end
     ninjia.a.x, ninjia.a.y = 0, -0.1
+
     M.setState(ninjia, "Jump")
 end
 
@@ -90,6 +95,20 @@ function M.updatePhysics(ninjia, n)
     ninjia.v.y = ninjia.v.y + ninjia.a.y * n
 
     M.setPosition(ninjia, cc.p(px, py) )
+end
+
+function M.jumpOver(ninjia)
+    ninjia.speed = 3
+    ninjia.v.x, ninjia.v.y = 3, ninjia.speed
+    ninjia.a.x, ninjia.a.y = 0, -0.1
+    M.setState(ninjia, "Jump")
+end
+
+function M.stopJumpOver(ninjia)
+    ninjia.v.x, ninjia.v.y = 0, 0
+    ninjia.a.x, ninjia.a.y = 0, 0
+    ninjia.speed = 0
+    M.setState(ninjia, "Idle")
 end
 
 --direction {x, y} vector

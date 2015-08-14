@@ -31,12 +31,19 @@ function PlayScene:onEnter()
 
     local param2={ ninjia=self.ninjia[1], world=self, position = {x=100, y= s.height/2 } } 
     local runBack, stopRunBack = aiNinjia.getAction("runTo", param2)
-    local runBackNode = bt.createLeafNode(runBack, stopRunBack, aiNinjia.getValidate("closeToHole", param2) )
+    local runBackNode = bt.createLeafNode(runBack, stopRunBack)
 
     local seqNode = bt.createComposite("Sequence", nil, runRightNode, runBackNode)
     seqNode.name = "run right and left"
 
-    self.ninjia[1].bt_root = seqNode
+    local jump_param={ninjia=self.ninjia[1], world=self} 
+    local jumpOver, stopJumpOver = aiNinjia.getAction("jumpOver", jump_param)
+    local jumpOverNode = bt.createLeafNode(jumpOver, stopJumpOver, aiNinjia.getValidate("closeToHole", jump_param) )
+
+    local selectorNode = bt.createComposite("Selector", nil, jumpOverNode, seqNode)
+
+    self.ninjia[1].bt_root = selectorNode
+    print("end of create behavior tree")
     -- end of create behavior tree
 end
 
