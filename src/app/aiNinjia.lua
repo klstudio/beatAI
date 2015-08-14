@@ -57,6 +57,20 @@ function M.getAction(action, param)
     end
 end
 
+-- condition: name of condition type
+-- param = {ninjia=, world=}
+function M.getValidate(condition, param)
+    local world = param.world
+    local ninjia = param.ninjia
+
+    local function _closeToHole()
+        return world.dummy_hole
+    end
+
+    if condition == "closeToHole" then
+        return _closeToHole
+    end
+end
 
 return M
 

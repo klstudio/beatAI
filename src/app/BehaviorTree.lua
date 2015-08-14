@@ -5,12 +5,13 @@ local M={ }
 node = {
            type = "leaf" or "Sequence"
            name = nil
+           validate = validation function 
            tick = tick function
            child = nil
            state = "Active" or "Inactive"
            action = function or nil
            stop = function or nil
-           runningChild = nil  -- last running child index
+           activeChild = nil  -- last active(running) child index
        }
 --]]
 
@@ -20,6 +21,28 @@ local function printNode(node)
     print("        type = ", node.type)
     print("        state = ", node.state)
     print("       }")
+end
+
+local function validate( node )
+    local ret = true
+    if node.validate then
+        ret = node.validate()
+    end
+    return ret
+end
+
+local function stop(node)
+    if node.state ~= "Active" then
+        return
+    end
+
+    if node.type == "leaf" then
+        node.state = "Inactive"
+        if node.stop then
+            node.stop()
+        end
+    else
+    end
 end
 
 local function tickLeaf( node )
@@ -38,19 +61,55 @@ local function tickLeaf( node )
     return ret 
 end
 
+--selector (priority 'or')
+local function tickSelector( node )
+    local i = 1
+    local validatedChild = nil
+    local ret = nil
+
+    --validate first
+    while node.child[i] do
+        if validate( node.child[i] ) then
+            validatedChild = node.child[i]
+        end
+    end
+
+    if validatedChild then
+       -- stop last running btree
+       if node.state == "Active" and node.activeChild ~= i then
+           stop(node.child[node.activeChild])
+       end
+       ret = validatedChild.tick(validatedChild)
+    else
+       if node.state == "Active" and node.activeChild then
+           stop(node.child[node.activeChild])
+       end
+       ret = "Failure"
+    end
+
+    if ret == "Running" then
+        node.state = "Active"
+        node.activeChild = i
+    else
+        node.state = "Inactive"
+        node.activeChild = nil
+    end
+    return ret
+end
+
 local function tickSequence( node )
     local i 
     local ret = "Success"
 
     if node.state == "Inactive" then
         -- start this subtree
-        assert(node.runningChild == nil)
+        assert(node.activeChild == nil)
         i = 1
     elseif node.state == "Active" then
-        i = node.runningChild
+        i = node.activeChild
     end
 
-    while node.child[i] and ret == "Success" do
+    while ret == "Success" and node.child[i] and validate( node.child[i] )  do
         --print("tick node child ", i)
         ret = node.child[i].tick( node.child[i] )
         i = i + 1
@@ -58,10 +117,16 @@ local function tickSequence( node )
 
     if ret == "Running" then
         node.state = "Active"
-        node.runningChild = i - 1
+        node.activeChild = i - 1
     else
+        if node.child[i] and validate( node.child[i] ) == false then
+            ret = "Failure"
+            if node.child[i].state == "Active" then
+                stop(node.child[i])
+            end
+        end
         node.state = "Inactive"
-        node.runningChild = nil
+        node.activeChild = nil
     end
 
     return ret
@@ -71,6 +136,7 @@ function M.tick( node )
     --print("tick node ", node)
     return node.tick(node)
 end
+
 
 function M.addNode(parent, node)
     assert(parent.type ~= leaf)
@@ -83,31 +149,34 @@ function M.addNode(parent, node)
     return parent
 end
 
-function M.createLeafNode(action, stopAction)
+function M.createLeafNode(action, stopAction, validate)
     local node = {}
     node.type = "leaf"
     node.tick = tickLeaf
     node.child = nil
-    node.runningChild = nil
+    node.activeChild = nil
     node.state = "Inactive"
     node.action = action
     node.stop = stopAction
+    node.validate = validate
     print("createLeafNode", action, stopAction)
     return node
 end
 
-function M.createComposite(type, ...)
+function M.createComposite(type, validate, ...)
     local node = {}
     node.type = type
-    node.runningChild = nil
+    node.activeChild = nil
     node.child={}
     node.state = "Inactive"
     node.action = nil
     node.stop = nil
+    node.validate = validate
 
     if type == "Sequence" then
         node.tick = tickSequence
-    elseif type == "Priority" then
+    elseif type == "Selector" then
+        node.tick = tickSelector
     end
 
     for i, v in ipairs{...} do

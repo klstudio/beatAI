@@ -55,7 +55,7 @@ end
 
 function M.setState(ninjia, state)
     ninjia.sprite:stopAllActions()
-    print("setState: ninjia ", ninjia.id, " ", state)
+    --print("setState: ninjia ", ninjia.id, " ", state)
     runAnimation( ninjia, state )
     ninjia.state = state
 end

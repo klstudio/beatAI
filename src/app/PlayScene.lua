@@ -25,17 +25,16 @@ function PlayScene:onEnter()
 
     -- attach behavior tree to ninjia
     local s = cc.Director:getInstance():getWinSize()
-    local param={ ninjia=self.ninjia[1], wolrd=self, position = {x=s.width - 120, y= s.height/2 } } 
+    local param={ ninjia=self.ninjia[1], world=self, position = {x=s.width - 120, y= s.height/2 } } 
     local runTo, stopRunTo = aiNinjia.getAction("runTo", param)
     local runRightNode = bt.createLeafNode(runTo, stopRunTo)
-    runRightNode.name = "run right to"
 
-    local param2={ ninjia=self.ninjia[1], wolrd=self, position = {x=100, y= s.height/2 } } 
+    local param2={ ninjia=self.ninjia[1], world=self, position = {x=100, y= s.height/2 } } 
     local runBack, stopRunBack = aiNinjia.getAction("runTo", param2)
-    local runBackNode = bt.createLeafNode(runBack, stopRunBack)
-    runBackNode.name = "run left to"
+    local runBackNode = bt.createLeafNode(runBack, stopRunBack, aiNinjia.getValidate("closeToHole", param2) )
 
-    local seqNode = bt.createComposite("Sequence", runRightNode, runBackNode)
+    local seqNode = bt.createComposite("Sequence", nil, runRightNode, runBackNode)
+    seqNode.name = "run right and left"
 
     self.ninjia[1].bt_root = seqNode
     -- end of create behavior tree
@@ -54,6 +53,8 @@ function PlayScene:onCreate()
     self.ninjia = {}
     self.solidBox = {}
 
+    self.dummy_hole = false     -- to test conditional behavior tree node
+
     -- To Do: release sprite
     self.ninjia[1] = nj.new(1)
 
@@ -67,6 +68,23 @@ function PlayScene:onCreate()
     -- to do: unschedule when exit
     self:scheduleUpdate( handler(self, self.runFrame) )
     self.frameNum = 0
+
+    -- register touch handler
+    local function onTouchesBegan(touches, event)
+        if self.dummy_hole == false then
+            self.dummy_hole = true
+        else
+            self.dummy_hole = false
+        end
+        print("onTouchesBegan dummy_hole ", self.dummy_hole)
+    end
+
+    local listener = cc.EventListenerTouchAllAtOnce:create()    
+    listener:registerScriptHandler(onTouchesBegan,cc.Handler.EVENT_TOUCHES_BEGAN )
+    local eventDispatcher = self:getEventDispatcher()
+    eventDispatcher:addEventListenerWithSceneGraphPriority(listener, self)
+
+    --listener:registerScriptHandler(onTouchesMoved,cc.Handler.EVENT_TOUCHES_MOVED )
 end
 
 return PlayScene
