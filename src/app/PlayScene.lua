@@ -56,12 +56,33 @@ function PlayScene:onExit()
     self.ninjia[1].bt_root = nil
 end
 
+function PlayScene:loadLevelMap(levelId)
+    local map = cc.TMXTiledMap:create("level1.tmx")
+    self:addChild(map, 10)
+
+    local  pChildrenArray = map:getChildren()
+    local  child = nil
+    local  pObject = nil
+    local i = 0
+    local len = table.getn(pChildrenArray)
+    for i = 0, len-1, 1 do
+        pObject = pChildrenArray[i + 1]
+        child = pObject
+
+        if child == nil then
+            break
+        end
+
+        child:getTexture():setAntiAliasTexParameters()
+    end
+end
+
 function PlayScene:onCreate()
     local s = cc.Director:getInstance():getWinSize()
     print("window size width ", s.width, "  height ", s.height)
 
     -- background
-    cc.LayerColor:create(cc.c4b(50,50,50,255)):addTo(self)
+    cc.LayerColor:create(cc.c4b(50,50,50,255)):addTo(self, 0)
     self.ninjia = {}
     self.solidBox = {}
 
@@ -70,7 +91,7 @@ function PlayScene:onCreate()
     -- To Do: release sprite
     self.ninjia[1] = nj.new(1)
 
-    self:addChild( self.ninjia[1].sprite )
+    self:addChild( self.ninjia[1].sprite, 20)
     nj.setPosition( self.ninjia[1], cc.p( s.width/2-280, s.height/2) )
 
     --nj.setState( self.ninjia[1], "Idle" )
@@ -97,6 +118,9 @@ function PlayScene:onCreate()
     eventDispatcher:addEventListenerWithSceneGraphPriority(listener, self)
 
     --listener:registerScriptHandler(onTouchesMoved,cc.Handler.EVENT_TOUCHES_MOVED )
+    self:loadLevelMap(1)
+
+
 end
 
 return PlayScene
