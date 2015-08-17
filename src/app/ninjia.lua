@@ -55,7 +55,7 @@ end
 
 function M.setState(ninjia, state)
     ninjia.sprite:stopAllActions()
-    --print("setState: ninjia ", ninjia.id, " ", state)
+    print("setState: ninjia ", ninjia.id, " ", state)
     runAnimation( ninjia, state )
     ninjia.state = state
 end
@@ -69,18 +69,6 @@ function M.setOrientation(ninjia, o)
         ninjia.sprite:setFlipX(false)
     end
     ninjia.orientation = o
-end
-
-function M.jump(ninjia)
-    ninjia.speed = 4
-    if ninjia.orientation == "right" then
-        ninjia.v.x, ninjia.v.y = 0, ninjia.speed   -- per frame
-    else
-        ninjia.v.x, ninjia.v.y = 0, -ninjia.speed   -- per frame
-    end
-    ninjia.a.x, ninjia.a.y = 0, -0.1
-
-    M.setState(ninjia, "Jump")
 end
 
 -- move ninjia for n frame based on current p, v, a
@@ -99,7 +87,12 @@ end
 
 function M.jumpOver(ninjia)
     ninjia.speed = 3
-    ninjia.v.x, ninjia.v.y = 3, ninjia.speed
+    if ninjia.orientation == "right" then
+        ninjia.v.x, ninjia.v.y = 3, ninjia.speed
+    else
+        ninjia.v.x, ninjia.v.y = -3, ninjia.speed
+    end
+
     ninjia.a.x, ninjia.a.y = 0, -0.1
     M.setState(ninjia, "Jump")
 end

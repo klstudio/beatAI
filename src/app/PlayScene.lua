@@ -28,10 +28,12 @@ function PlayScene:onEnter()
     local param={ ninjia=self.ninjia[1], world=self, position = {x=s.width - 120, y= s.height/2 } } 
     local runTo, stopRunTo = aiNinjia.getAction("runTo", param)
     local runRightNode = bt.createLeafNode(runTo, stopRunTo)
+    runRightNode.name = "run right"
 
     local param2={ ninjia=self.ninjia[1], world=self, position = {x=100, y= s.height/2 } } 
     local runBack, stopRunBack = aiNinjia.getAction("runTo", param2)
     local runBackNode = bt.createLeafNode(runBack, stopRunBack)
+    runBackNode.name = "run left"
 
     local seqNode = bt.createComposite("Sequence", nil, runRightNode, runBackNode)
     seqNode.name = "run right and left"
@@ -39,8 +41,10 @@ function PlayScene:onEnter()
     local jump_param={ninjia=self.ninjia[1], world=self} 
     local jumpOver, stopJumpOver = aiNinjia.getAction("jumpOver", jump_param)
     local jumpOverNode = bt.createLeafNode(jumpOver, stopJumpOver, aiNinjia.getValidate("closeToHole", jump_param) )
+    jumpOverNode.name = "jump over"
 
     local selectorNode = bt.createComposite("Selector", nil, jumpOverNode, seqNode)
+    selectorNode.name = "priority selector"
 
     self.ninjia[1].bt_root = selectorNode
     print("end of create behavior tree")
@@ -54,6 +58,7 @@ end
 
 function PlayScene:onCreate()
     local s = cc.Director:getInstance():getWinSize()
+    print("window size width ", s.width, "  height ", s.height)
 
     -- background
     cc.LayerColor:create(cc.c4b(50,50,50,255)):addTo(self)

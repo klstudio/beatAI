@@ -10,7 +10,7 @@ node = {
            child = nil
            state = "Active" or "Inactive"
            action = function or nil
-           stop = function or nil   stop action
+           stopAction = function or nil   stop action
            activeChild = nil  -- last active(running) child index
        }
 --]]
@@ -31,23 +31,34 @@ local function validate( node )
     return ret
 end
 
+function M.tick( node )
+    --print("tick node ------->")
+    --printNode(node)
+    return node.tick(node)
+end
+
 local function stop(node)
     if node.state ~= "Active" then
+        node.activeChild = nil
         return
     end
 
+    node.state = "Inactive"
+
     if node.type == "leaf" then
-        node.state = "Inactive"
-        if node.stop then
-            node.stop()
+        if node.stopAction then
+            node.stopAction()
         end
+        return
     else
+        if node.activeChild then
+            stop(node.activeChild)
+        end
+        node.activeChild = nil
     end
 end
 
 local function tickLeaf( node )
-    --print("--tickLeaf")
-    --printNode(node)
     assert(node.action ~= nil)
 
     local ret = node.action()
@@ -83,7 +94,8 @@ local function tickSelector( node )
        if node.state == "Active" and node.activeChild ~= i then
            stop(node.child[node.activeChild])
        end
-       ret = validatedChild.tick(validatedChild)
+       --ret = validatedChild.tick(validatedChild)
+       ret = M.tick( validatedChild )
     else
        if node.state == "Active" and node.activeChild then
            stop(node.child[node.activeChild])
@@ -115,7 +127,8 @@ local function tickSequence( node )
 
     while ret == "Success" and node.child[i] and validate( node.child[i] )  do
         --print("tick node child ", i)
-        ret = node.child[i].tick( node.child[i] )
+        -- ret = node.child[i].tick( node.child[i] )
+        ret = M.tick( node.child[i] )
         i = i + 1
     end
 
@@ -136,10 +149,6 @@ local function tickSequence( node )
     return ret
 end
 
-function M.tick( node )
-    --print("tick node ", node)
-    return node.tick(node)
-end
 
 
 function M.addNode(parent, node)
@@ -161,7 +170,7 @@ function M.createLeafNode(action, stopAction, validate)
     node.activeChild = nil
     node.state = "Inactive"
     node.action = action
-    node.stop = stopAction
+    node.stopAction = stopAction
     node.validate = validate
     print("createLeafNode", action, stopAction)
     return node
@@ -174,7 +183,7 @@ function M.createComposite(type, validate, ...)
     node.child={}
     node.state = "Inactive"
     node.action = nil
-    node.stop = nil
+    node.stopAction = nil
     node.validate = validate
 
     if type == "Sequence" then
