@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="25" height="15" tilewidth="64" tileheight="64" nextobjectid="1">
- <tileset firstgid="1" name="bgsolid" tilewidth="64" tileheight="64" tilecount="32">
+ <tileset firstgid="1" name="tilesets" tilewidth="64" tileheight="64" tilecount="32">
   <image source="tilesets.png" width="256" height="512"/>
+ </tileset>
+ <tileset firstgid="33" name="metatiles" tilewidth="64" tileheight="64" tilecount="2">
+  <tile id="0">
+   <image width="64" height="64" source="metatile/blue.png"/>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="solid" value="1"/>
+   </properties>
+   <image width="64" height="64" source="metatile/red.png"/>
+  </tile>
  </tileset>
  <layer name="background" width="25" height="15">
   <data encoding="base64" compression="zlib">
-   eJwTYmBgEKIx5h3Fo3gUj+JRDMe0LnNBGADX8hQG
+   eJwTYmBgEKIQCxPAtDafGnbQwx/DKaxG8SgexYMbAwBGIhqJ
   </data>
  </layer>
  <layer name="levelmap" width="25" height="15">
   <data encoding="base64" compression="zlib">
-   eJxjYBh+gJMAHu5gKPsZl7sHyj/EpCN8bhvJ6XAUDCwAAKggAWA=
+   eJxjYBgFIxmw48CjYGgAYuMMVzyz45EnxayBBhJYMLWBOBY8mAEAcKoBog==
+  </data>
+ </layer>
+ <layer name="meta" width="25" height="15" opacity="0.5">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFIxko4cCjYGgAYuMMVzwr4ZEnxaxRMPgAAPKVA3U=
   </data>
  </layer>
 </map>

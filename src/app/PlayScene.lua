@@ -64,6 +64,7 @@ function PlayScene:loadLevelMap(levelId)
     local  child = nil
     local  pObject = nil
     local i = 0
+    --[[
     local len = table.getn(pChildrenArray)
     for i = 0, len-1, 1 do
         pObject = pChildrenArray[i + 1]
@@ -72,9 +73,11 @@ function PlayScene:loadLevelMap(levelId)
         if child == nil then
             break
         end
-
         child:getTexture():setAntiAliasTexParameters()
     end
+    --]]
+    local metaLayer = map:getLayer("meta")
+    metaLayer:setVisible(false)
 end
 
 function PlayScene:onCreate()
