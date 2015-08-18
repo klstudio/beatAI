@@ -1,5 +1,5 @@
 local M={}
-local physics=require "app.physics"
+local physicsNinjia=require "app.physicsNinjia"
 local bt=require "app.BehaviorTree"
 
 local anim = {}
@@ -31,6 +31,8 @@ function M.new( id )
                  orientation = right,
 
                  -- physics
+                 width = 64
+                 height = 64
                  speed = 0,
                  v = {x=0, y=0},  -- velocity
                  a = {x=0, y=0},   -- acceleration
@@ -43,10 +45,6 @@ function M.new( id )
                  bt_root = {},
                 }
    return ninjia
-end
-
-function M.setPosition( ninjia, p )
-    ninjia.sprite:setPosition( p )
 end
 
 local function runAnimation( ninjia, state )
@@ -71,19 +69,6 @@ function M.setOrientation(ninjia, o)
     ninjia.orientation = o
 end
 
--- move ninjia for n frame based on current p, v, a
-function M.updatePhysics(ninjia, n)
-    local px, py = ninjia.sprite:getPosition()
-    n = n or 1
-
-    px = px + ninjia.v.x * n
-    py = py + ninjia.v.y * n
-
-    ninjia.v.x = ninjia.v.x + ninjia.a.x * n
-    ninjia.v.y = ninjia.v.y + ninjia.a.y * n
-
-    M.setPosition(ninjia, cc.p(px, py) )
-end
 
 function M.jumpOver(ninjia)
     ninjia.speed = 3
@@ -127,6 +112,10 @@ function M.run(ninjia, direction)
     M.setState(ninjia, "Run")
 end
 
+function M.setPosition( ninjia, p )
+    physicsNinjia.setPosition(ninjia, p)
+end
+
 function M.stopRun(ninjia)
     ninjia.v.x, ninjia.v.y = 0, 0
     ninjia.a.x, ninjia.a.y = 0, 0
@@ -143,7 +132,7 @@ function M.think(ninjia, world, dt)
     bt.tick(ninjia.bt_root)
 
     --update ninjia physics
-    M.updatePhysics(ninjia, 1)
+    physicsNinjia.updatePhysics(ninjia,world, 1)
 end
 
 -- the following code get run once when required

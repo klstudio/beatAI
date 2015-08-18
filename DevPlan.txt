@@ -13,10 +13,11 @@ To Do:
 
 Done:
 -- investigating AI technique and integration
+-- behavior tree framework
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 design decision:
 using AABB separating axis algorithm for dynamic collision test
 evaluate/estimate collision in future 5 frames
-for static object, there’s no need for dynamic collision test as long as ninja speed is not too high than its own width/height
+for static object, there's no need for dynamic collision test as long as ninja speed is not too high than its own width/height

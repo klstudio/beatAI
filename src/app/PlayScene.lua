@@ -5,6 +5,15 @@ local aiNinjia = require "app.aiNinjia"
 
 local PlayScene = class("PlayScene", cc.load("mvc").ViewBase)
 
+--[[
+    playScen = { ... cocos2d-x
+                 ninjia ={},
+                 frameNum,
+                 levelMap,  -- TMXTileMap
+               }
+
+--]]
+
 --local scheduler = cc.Director:getInstance():getScheduler()
 
 -- main loop of game play --
@@ -59,6 +68,7 @@ end
 function PlayScene:loadLevelMap(levelId)
     local map = cc.TMXTiledMap:create("level1.tmx")
     self:addChild(map, 10)
+    self.levelMap = map
 
     local  pChildrenArray = map:getChildren()
     local  child = nil
@@ -87,7 +97,6 @@ function PlayScene:onCreate()
     -- background
     cc.LayerColor:create(cc.c4b(50,50,50,255)):addTo(self, 0)
     self.ninjia = {}
-    self.solidBox = {}
 
     self.dummy_hole = false     -- to test conditional behavior tree node
 
