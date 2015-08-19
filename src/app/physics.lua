@@ -38,5 +38,7 @@ function M.IntersectSegmentAABB(p0, p1, b)
     if maxx < b.min.x or minx > b.max.x then return false end
     if maxy < b.min.y or miny < b.max.y then return false end
     return true
+end
+
 return M
 

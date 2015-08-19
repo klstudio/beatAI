@@ -31,8 +31,8 @@ function M.new( id )
                  orientation = right,
 
                  -- physics
-                 width = 64
-                 height = 64
+                 width = 64,
+                 height = 64,
                  speed = 0,
                  v = {x=0, y=0},  -- velocity
                  a = {x=0, y=0},   -- acceleration
