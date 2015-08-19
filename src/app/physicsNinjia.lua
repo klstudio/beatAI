@@ -10,13 +10,24 @@ local function tileCoordForPosition(map, p)
     return tx, ty
 end
 
+local function getGroundLevel(world, tile)
+    local tileSize = world.levelMap:getTileSize()
+    local pos = tile:getPosition()
+
+    print("pos.x ", pos.x)
+end
+
 function M.setPosition( ninjia, p )
     ninjia.sprite:setPosition( p )
 end
 
+
+
+--TileMap alchor point left bottom
 local function checkGround(ninjia, world, newPos)
-    local tpr = {x=newPos[1]+30, y=newPos[2]-45}
-    local tpl = {x=newPos[1]-30, y=newPos[2]-45}
+    local tpr = {x=newPos.x+30, y=newPos.y-45}
+    local tpl = {x=newPos.x-30, y=newPos.y-45}
+    --print("pos.x ", tpr.x, " pos.y ", tpr.y)
     --To Do: check Ground based on orientation for inverse gravity, climbing walls
     local metaLayer = world.levelMap:getLayer("meta")
 
@@ -26,22 +37,46 @@ local function checkGround(ninjia, world, newPos)
     --To Do: check tile coord validity
     tpr.x, tpr.y = tileCoordForPosition( world.levelMap, cc.p(tpr.x, tpr.y) )
     tpl.x, tpl.y = tileCoordForPosition( world.levelMap, cc.p(tpl.x, tpl.y) )
-    print("newPos.x ", newPos[1], " newPos.y ", newPos[2])
-    print("tpr.x ", tpr.x, ", tpr.y ", tpr.y)
-    print("tpl.x ", tpl.x, ", tpl.y ", tpl.y)
+    local mapPos = cc.p(world.levelMap:getPosition())
+    --world.levelMap:setPosition(cc.p(20,100))
+    --print("mapPos.x ", mapPos.x, " mapPos.y ", mapPos.y)
+    --print("tpr.x ", tpr.x, ", tpr.y ", tpr.y)
+    --print("tpl.x ", tpl.x, ", tpl.y ", tpl.y)
 
     local tile_r =  metaLayer:getTileAt( cc.p(tpr.x, tpr.y) )
     local tile_l =  metaLayer:getTileAt( cc.p(tpl.x, tpl.y) )
 
+    if tile_r == nil and tile_l == nil then return false end
+    local ground_y = nil
+
     --get tile property
-    if tile_r and tile_l then
-        local gid_r = metaLayer:getTileGIDAt(cc.p(tpr.x,tpr.y))
+    if tile_l then
         local gid_l = metaLayer:getTileGIDAt(cc.p(tpl.x,tpl.y))
-        world.levelMap:getPropertiesForGID(gid_r)
-        return true
+        local property = world.levelMap:getPropertiesForGID(gid_l)
+        if property["solid"] then 
+            ground_y = getGroundLevel(world, tile_l)
+        end
     end
 
-    return false
+    if tile_r then
+        local gid_r = metaLayer:getTileGIDAt(cc.p(tpr.x,tpr.y))
+        local property = world.levelMap:getPropertiesForGID(gid_r)
+        local tmp
+        if property["solid"] then 
+            tmp = getGroundLevel(world, tile_r)
+            if tmp > ground_y then ground_y = tmp end
+        end
+    end
+
+    if ground_y then
+        --update newPos.y (push back)
+        local s = ninjia.sprite:getContentSize()
+        newPos.y = ground_y - s.height/2 + 3
+    else 
+        return false
+    end
+
+    return true
 end
 
 
@@ -52,13 +87,14 @@ function M.updatePhysics(ninjia, world, n)
 
     px = px + ninjia.v.x * n
     py = py + ninjia.v.y * n
+    local newPos = { x=px, y=py}
 
     ninjia.v.x = ninjia.v.x + ninjia.a.x * n
     ninjia.v.y = ninjia.v.y + ninjia.a.y * n
 
     --collision detection with new position
     --determine ground or air state
-    if checkGround(ninjia, world, {px, py} ) then
+    if checkGround(ninjia, world, newPos ) then
         ninjia.a.y = 0
         ninjia.v.y = 0
         ninjia.v.x = 0
@@ -67,7 +103,7 @@ function M.updatePhysics(ninjia, world, n)
         ninjia.a.x, ninjia.a.y = 0, -0.1
     end
 
-    M.setPosition(ninjia, cc.p(px, py) )
+    M.setPosition(ninjia, cc.p(newPos.x, newPos.y) )
 end
 
 return M

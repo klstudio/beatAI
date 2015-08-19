@@ -104,7 +104,7 @@ function PlayScene:onCreate()
     self.ninjia[1] = nj.new(1)
 
     self:addChild( self.ninjia[1].sprite, 20)
-    nj.setPosition( self.ninjia[1], cc.p( s.width/2-280, s.height/2) )
+    nj.setPosition( self.ninjia[1], cc.p( 50, s.height/2+300) )
 
     --nj.setState( self.ninjia[1], "Idle" )
     nj.setState( self.ninjia[1], "Idle" )
