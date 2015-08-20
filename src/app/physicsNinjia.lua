@@ -10,6 +10,27 @@ local function tileCoordForPosition(map, p)
     return tx, ty
 end
 
+local function getTileForPosition( map, p, layerName )
+    local tp = {x=nil, y=nil}
+    tp.x, tp.y = tileCoordForPosition( map, cc.p(p.x, p.y) )
+    local layer = map:getLayer(layerName)
+    local tile =  layer:getTileAt( cc.p(tp.x, tp.y) )
+    return tile, tp.x, tp.y
+end
+
+local function isSolidTile( map, pos )
+    local tile, tx, ty = getTileForPosition(map, pos, "meta")
+    if tile then
+        local metaLayer = map:getLayer("meta")
+        local gid = metaLayer:getTileGIDAt(cc.p(tx,ty))
+        local property = map:getPropertiesForGID(gid)
+        if property["solid"] then 
+            return true
+        end
+    end
+    return false
+end
+
 local function getGroundLevel(world, tile)
     local tileSize = world.levelMap:getTileSize()
     local px, py = tile:getPosition()
@@ -22,13 +43,20 @@ function M.setPosition( ninjia, p )
     ninjia.sprite:setPosition( p )
 end
 
-
+local function checkWalls(ninjia, world, newPos) 
+    local tpr = {x=newPos.x+35, y=newPos.y - 20}
+    if isSolidTile( world.levelMap, tpr ) then
+        print("right wall newPos.x ", newPos.x, " newPos.y ", newPos.y)
+        return "right"
+    end
+    return nil
+end
 
 --TileMap anchor point left bottom
 --Tile anchor point left bottom too
 local function checkGround(ninjia, world, newPos)
-    local tpr = {x=newPos.x+30, y=newPos.y-46}
-    local tpl = {x=newPos.x-30, y=newPos.y-46}
+    local tpr = {x=newPos.x+30, y=newPos.y-45}
+    local tpl = {x=newPos.x-30, y=newPos.y-45}
     --print("pos.x ", tpr.x, " pos.y ", tpr.y)
     --print("pos.x ", tpl.x, " pos.y ", tpl.y)
     --To Do: check Ground based on orientation for inverse gravity, climbing walls
@@ -101,6 +129,15 @@ function M.updatePhysics(ninjia, world, n)
 
     --collision detection with new position
     --determine ground or air state
+    local bumpWall = checkWalls(ninjia, world, newPos) 
+    if bumpWall == "right" then
+        ninjia.v.x =0
+        if ninjia.a.x > 0 then ninjia.a.x = 0 end
+    elseif bumpWall == "left" then
+    elseif bumpWall == "top" then
+    end
+    
+
     if checkGround(ninjia, world, newPos ) then
         ninjia.a.y = 0
         ninjia.v.y = 0
@@ -109,6 +146,7 @@ function M.updatePhysics(ninjia, world, n)
     else
         ninjia.a.x, ninjia.a.y = 0, -0.1
     end
+
 
     M.setPosition(ninjia, cc.p(newPos.x, newPos.y) )
 end
