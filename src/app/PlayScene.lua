@@ -48,11 +48,11 @@ function PlayScene:onEnter()
     seqNode.name = "run right and left"
 
     local jump_param={ninjia=self.ninjia[1], world=self} 
-    local jumpOver, stopJumpOver = aiNinjia.getAction("jumpOver", jump_param)
-    local jumpOverNode = bt.createLeafNode(jumpOver, stopJumpOver, aiNinjia.getValidate("closeToHole", jump_param) )
-    jumpOverNode.name = "jump over"
+    local jump, stopJump = aiNinjia.getAction("jump", jump_param)
+    local jumpNode = bt.createLeafNode(jump, stopJump, aiNinjia.getValidate("closeToHole", jump_param) )
+    jumpNode.name = "jump"
 
-    local selectorNode = bt.createComposite("Selector", nil, jumpOverNode, seqNode)
+    local selectorNode = bt.createComposite("Selector", nil, jumpNode, seqNode)
     selectorNode.name = "priority selector"
 
     self.ninjia[1].bt_root = selectorNode
@@ -104,8 +104,7 @@ function PlayScene:onCreate()
     self.ninjia[1] = nj.new(1)
 
     self:addChild( self.ninjia[1].sprite, 20)
-    --nj.setPosition( self.ninjia[1], cc.p( 50, s.height/2+200) )
-    nj.setPosition( self.ninjia[1], cc.p( s.width/2-80, s.height-100) )
+    nj.setPosition( self.ninjia[1], cc.p( 50, s.height-150) )
 
     --nj.setState( self.ninjia[1], "Idle" )
     nj.setState( self.ninjia[1], "Idle" )

@@ -70,7 +70,7 @@ function M.setOrientation(ninjia, o)
 end
 
 
-function M.jumpOver(ninjia)
+function M.jump(ninjia)
     ninjia.speed = 3
     if ninjia.orientation == "right" then
         ninjia.v.x, ninjia.v.y = 3, ninjia.speed
@@ -82,7 +82,7 @@ function M.jumpOver(ninjia)
     M.setState(ninjia, "Jump")
 end
 
-function M.stopJumpOver(ninjia)
+function M.stopJump(ninjia)
     ninjia.v.x, ninjia.v.y = 0, 0
     ninjia.a.x, ninjia.a.y = 0, 0
     ninjia.speed = 0

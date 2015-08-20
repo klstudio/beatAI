@@ -53,30 +53,30 @@ function M.getAction(action, param)
         nj.stopRun(ninjia)
     end
 
-    local function _jumpOver()
+    local function _jump()
         local ninjia_px, ninjia_py = ninjia.sprite:getPosition()
         if ninjia.state == "Jump" and jmpOriginY and ninjia_py <= jmpOriginY then
-            nj.stopJumpOver(ninjia)
+            nj.stopJump(ninjia)
             return "Success"
         end
 
         if ninjia.state ~= "Jump" then
             -- start to jump
             jmpOriginY = ninjia_py
-            nj.jumpOver(ninjia)
+            nj.jump(ninjia)
         end
         
         return "Running"
     end
 
-    local function _stopJumpOver()
-        nj.stopJumpOver(ninjia)
+    local function _stopJump()
+        nj.stopJump(ninjia)
     end
 
     if action == "runTo" then
         return _runTo, _stopRunTo
-    elseif action == "jumpOver" then
-        return _jumpOver, _stopJumpOver
+    elseif action == "jump" then
+        return _jump, _stopJump
     end
 end
 
