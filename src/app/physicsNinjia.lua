@@ -12,9 +12,10 @@ end
 
 local function getGroundLevel(world, tile)
     local tileSize = world.levelMap:getTileSize()
-    local pos = tile:getPosition()
+    local px, py = tile:getPosition()
 
-    print("pos.x ", pos.x)
+    --print("tile pos.x ", px, "tile pos.y ", py)
+    return py+tileSize.height
 end
 
 function M.setPosition( ninjia, p )
@@ -23,11 +24,13 @@ end
 
 
 
---TileMap alchor point left bottom
+--TileMap anchor point left bottom
+--Tile anchor point left bottom too
 local function checkGround(ninjia, world, newPos)
-    local tpr = {x=newPos.x+30, y=newPos.y-45}
-    local tpl = {x=newPos.x-30, y=newPos.y-45}
+    local tpr = {x=newPos.x+30, y=newPos.y-46}
+    local tpl = {x=newPos.x-30, y=newPos.y-46}
     --print("pos.x ", tpr.x, " pos.y ", tpr.y)
+    --print("pos.x ", tpl.x, " pos.y ", tpl.y)
     --To Do: check Ground based on orientation for inverse gravity, climbing walls
     local metaLayer = world.levelMap:getLayer("meta")
 
@@ -47,7 +50,7 @@ local function checkGround(ninjia, world, newPos)
     local tile_l =  metaLayer:getTileAt( cc.p(tpl.x, tpl.y) )
 
     if tile_r == nil and tile_l == nil then return false end
-    local ground_y = nil
+    local ground_y = nil 
 
     --get tile property
     if tile_l then
@@ -64,14 +67,18 @@ local function checkGround(ninjia, world, newPos)
         local tmp
         if property["solid"] then 
             tmp = getGroundLevel(world, tile_r)
-            if tmp > ground_y then ground_y = tmp end
+            if ground_y then
+                if tmp > ground_y then ground_y = tmp end
+            else
+                ground_y = tmp
+            end
         end
     end
 
     if ground_y then
         --update newPos.y (push back)
         local s = ninjia.sprite:getContentSize()
-        newPos.y = ground_y - s.height/2 + 3
+        newPos.y = ground_y + s.height/2 - 3
     else 
         return false
     end
@@ -97,7 +104,7 @@ function M.updatePhysics(ninjia, world, n)
     if checkGround(ninjia, world, newPos ) then
         ninjia.a.y = 0
         ninjia.v.y = 0
-        ninjia.v.x = 0
+        --ninjia.v.x = 0
         --push ninjia to be on top of
     else
         ninjia.a.x, ninjia.a.y = 0, -0.1

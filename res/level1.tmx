@@ -21,12 +21,12 @@
  </layer>
  <layer name="levelmap" width="25" height="15">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFIxmw48CjYGgAYuMMVzyz45EnxayBBhJYMLWBOBY8mAEAcKoBog==
+   eJxjYBgFQwGw09BcbHgkAHr4k57xRqp6ZH2kpIPBmF4ksGBqA3EseDADAN22Acw=
   </data>
  </layer>
  <layer name="meta" width="25" height="15" opacity="0.5">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFIxko4cCjYGgAYuMMVzwr4ZEnxaxRMPgAAPKVA3U=
+   eJxjYBgFQwEo0dBcbHgkAHr4k57xRqp6ZH2kpIORml6GGgAABGoEQQ==
   </data>
  </layer>
 </map>
