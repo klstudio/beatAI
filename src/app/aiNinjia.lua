@@ -2,6 +2,12 @@ local M={}
 local nj=require "app.ninjia"
 --local bt=require "app.BehaviorTree"
 
+
+--[[AI Actions
+    runTo
+    jump
+--]]
+
 -- AI logic
 -- position {x=, y=}
 -- action return value 0 running -1 failed 1 success
@@ -15,9 +21,14 @@ end
 
 local function reachedPosition(ninjia, pos)
     local px, py = ninjia.sprite:getPosition()
-    local bounds = { lb = { x = px-30, y = py-30 },
-                     rt = { x = px+30, y = py+30 },
+    local bounds = { lb = { x = px-10, y = py-10 },
+                     rt = { x = px+10, y = py+10 },
                    }
+    if not pos.y  then
+        pos.y = py
+    elseif not pos.x  then
+        pos.x = px
+    end
     return containsPoint(bounds, pos)
 end
 
@@ -51,7 +62,7 @@ function M.getAction(action, param)
     end
 
     local function _stopRunTo()
-        print("stop runto")
+        print("stop runTo")
         nj.stopRun(ninjia)
     end
 
@@ -75,6 +86,9 @@ function M.getAction(action, param)
     local function _stopJump()
         print("stop jump")
         nj.stopJump(ninjia)
+    end
+
+    local function _idleFor() -- idle for param.t amount of time 
     end
 
     if action == "runTo" then

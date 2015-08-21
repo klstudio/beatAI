@@ -157,10 +157,16 @@ function M.closeToHole(ninjia, world)
         local test1 = { x = ninjiaPos.x+tileSize.width, y = ninjiaPos.y-ninjiaSize.height/2-2}
         local test2 = { x = ninjiaPos.x+tileSize.width*2, y = ninjiaPos.y-ninjiaSize.height/2-2}
         if not isSolidTile( world.levelMap, test1 ) or not isSolidTile( world.levelMap, test2) then
-            print("close to hole!")
+            print("right: close to hole!")
             return true
         end
     elseif ninjia.orientation == "left" then
+        local test1 = { x = ninjiaPos.x-tileSize.width, y = ninjiaPos.y-ninjiaSize.height/2-2}
+        local test2 = { x = ninjiaPos.x-tileSize.width*2, y = ninjiaPos.y-ninjiaSize.height/2-2}
+        if not isSolidTile( world.levelMap, test1 ) or not isSolidTile( world.levelMap, test2) then
+            print("left: close to hole!")
+            return true
+        end
     end
     return false
 end

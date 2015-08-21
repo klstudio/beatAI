@@ -34,12 +34,12 @@ function PlayScene:onEnter()
 
     -- attach behavior tree to ninjia
     local s = cc.Director:getInstance():getWinSize()
-    local param={ ninjia=self.ninjia[1], world=self, position = {x=s.width - 120, y= s.height/2 } } 
+    local param={ ninjia=self.ninjia[1], world=self, position = {x=s.width - 220, y= nil} } 
     local runTo, stopRunTo = aiNinjia.getAction("runTo", param)
     local runRightNode = bt.createLeafNode(runTo, stopRunTo)
     runRightNode.name = "run right"
 
-    local param2={ ninjia=self.ninjia[1], world=self, position = {x=100, y= s.height/2 } } 
+    local param2={ ninjia=self.ninjia[1], world=self, position = {x=200, y=nil } } 
     local runBack, stopRunBack = aiNinjia.getAction("runTo", param2)
     local runBackNode = bt.createLeafNode(runBack, stopRunBack)
     runBackNode.name = "run left"
