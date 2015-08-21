@@ -62,6 +62,7 @@ local function getTileBoundaries(world, tile)
     return left, bottom, right, top
 end
 
+
 local function checkWalls(ninjia, world, newPos) 
     local s = ninjia.sprite:getContentSize()
     local tpr = {x=newPos.x+s.width/2+1, y=newPos.y - 30}
@@ -96,8 +97,9 @@ end
 --TileMap anchor point left bottom
 --Tile anchor point left bottom too
 local function checkGround(ninjia, world, newPos)
-    local tpr = {x=newPos.x+15, y=newPos.y-45}
-    local tpl = {x=newPos.x-15, y=newPos.y-45}
+    local njs = ninjia.sprite:getContentSize()
+    local tpr = {x=newPos.x+15, y=newPos.y-njs.height/2}
+    local tpl = {x=newPos.x-15, y=newPos.y-njs.height/2}
     local metaLayer = world.levelMap:getLayer("meta")
     local s = metaLayer:getLayerSize()
 
@@ -144,6 +146,29 @@ local function checkGround(ninjia, world, newPos)
     return true
 end
 
+function M.closeToHole(ninjia, world)
+    local ninjiaPos = cc.p(ninjia.sprite:getPosition())
+    local ninjiaSize = ninjia.sprite:getContentSize()
+    local tileSize = {width=64, height=64}
+    -- return false if on the air
+    if not checkGround(ninjia, world, ninjiaPos) then return false end
+    if ninjia.v.x == 0 and ninjia.a.x == 0 then return false end
+    if ninjia.orientation == "right" then
+        local test1 = { x = ninjiaPos.x+tileSize.width, y = ninjiaPos.y-ninjiaSize.height/2-2}
+        local test2 = { x = ninjiaPos.x+tileSize.width*2, y = ninjiaPos.y-ninjiaSize.height/2-2}
+        if not isSolidTile( world.levelMap, test1 ) or not isSolidTile( world.levelMap, test2) then
+            print("close to hole!")
+            return true
+        end
+    elseif ninjia.orientation == "left" then
+    end
+    return false
+end
+
+function M._checkGround(ninjia, world)
+    local ninjiaPos = cc.p(ninjia.sprite:getPosition())
+    return checkGround(ninjia, world, ninjiaPos) 
+end
 
 -- move ninjia for n frame based on current p, v, a
 function M.updatePhysics(ninjia, world, n)

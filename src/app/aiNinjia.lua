@@ -26,6 +26,7 @@ end
 function M.getAction(action, param)
     local ninjia = param.ninjia
     local jmpOriginY = nil
+    local world =  param.world
 
     local function _runTo()
         --print("runTo: ninjia id", ninjia.id)
@@ -50,13 +51,15 @@ function M.getAction(action, param)
     end
 
     local function _stopRunTo()
+        print("stop runto")
         nj.stopRun(ninjia)
     end
 
     local function _jump()
         local ninjia_px, ninjia_py = ninjia.sprite:getPosition()
-        if ninjia.state == "Jump" and jmpOriginY and ninjia_py <= jmpOriginY then
+        if ninjia.state == "Jump" and ninjia.a.y == 0 then
             nj.stopJump(ninjia)
+            print("jump returning success")
             return "Success"
         end
 
@@ -70,6 +73,7 @@ function M.getAction(action, param)
     end
 
     local function _stopJump()
+        print("stop jump")
         nj.stopJump(ninjia)
     end
 
@@ -86,8 +90,9 @@ function M.getValidate(condition, param)
     local world = param.world
     local ninjia = param.ninjia
 
-    local function _closeToHole()
-        return world.dummy_hole
+    local function _closeToHole(node)
+        if node.state == "Active" then return true end
+        return nj.closeToHole( ninjia, world )
     end
 
     if condition == "closeToHole" then

@@ -71,14 +71,14 @@ end
 
 
 function M.jump(ninjia)
-    ninjia.speed = 3
+    ninjia.speed = 8
     if ninjia.orientation == "right" then
-        ninjia.v.x, ninjia.v.y = 3, ninjia.speed
+        ninjia.v.x, ninjia.v.y = 5, ninjia.speed
     else
-        ninjia.v.x, ninjia.v.y = -3, ninjia.speed
+        ninjia.v.x, ninjia.v.y = -5, ninjia.speed
     end
 
-    ninjia.a.x, ninjia.a.y = 0, -0.1
+    --ninjia.a.x, ninjia.a.y = 0, -0.1
     M.setState(ninjia, "Jump")
 end
 
@@ -121,6 +121,14 @@ function M.stopRun(ninjia)
     ninjia.a.x, ninjia.a.y = 0, 0
     ninjia.speed = 0
     M.setState(ninjia, "Idle")
+end
+
+function M.closeToHole( ninjia, world )
+   return physicsNinjia.closeToHole(ninjia, world)
+end
+
+function M.checkGround( ninjia, world )
+    return physicsNinjia._checkGround( ninjia, world)
 end
 
 function M.think(ninjia, world, dt)

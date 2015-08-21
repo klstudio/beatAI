@@ -26,7 +26,7 @@ end
 local function validate( node )
     local ret = true
     if node.validate then
-        ret = node.validate()
+        ret = node.validate(node)
     end
     return ret
 end
@@ -38,6 +38,9 @@ function M.tick( node )
 end
 
 local function stop(node)
+    --print("stopping node ", node)
+    --printNode(node)
+
     if node.state ~= "Active" then
         node.activeChild = nil
         return
@@ -50,9 +53,11 @@ local function stop(node)
             node.stopAction()
         end
         return
-    else
+    else 
         if node.activeChild then
-            stop(node.activeChild)
+            --print("going to stop child ", node.activeChild)
+            --printNode( node.child[] )
+            stop(node.child[node.activeChild])
         end
         node.activeChild = nil
     end
@@ -92,6 +97,8 @@ local function tickSelector( node )
     if validatedChild then
        -- stop last running btree
        if node.state == "Active" and node.activeChild ~= i then
+           --print("stoping node.activeChild = ", node.activeChild)
+           --printNode(node.child[node.activeChild])
            stop(node.child[node.activeChild])
        end
        --ret = validatedChild.tick(validatedChild)
