@@ -1,7 +1,7 @@
 local nj=require "app.ninjia"
 local physics=require "app.physics"
-local bt=require "app.BehaviorTree"
-local aiNinjia = require "app.aiNinjia"
+--local bt=require "app.BehaviorTree"
+--local aiNinjia = require "app.aiNinjia"
 
 local PlayScene = class("PlayScene", cc.load("mvc").ViewBase)
 
@@ -31,10 +31,16 @@ end
 -- based on CCNode
 function PlayScene:onEnter()
     print("playscene onEnter ... ")
+    print("loading level 1 ai ...")
+    local ai = require "app.aiScript"
+    ai.setEnv(self.ninjia[1], self)
+    self.ninjia[1].bt_root = ai.aiGetBehaviorTree()
+    print("end of create behavior tree")
 
     -- attach behavior tree to ninjia
+    --[[
     local s = cc.Director:getInstance():getWinSize()
-    local param={ ninjia=self.ninjia[1], world=self, position = {x=s.width - 220, y= nil} } 
+    local param={ ninjia=self.ninjia[1], world=self, position = {x=s.width - 300, y= nil} } 
     local runTo, stopRunTo = aiNinjia.getAction("runTo", param)
     local runRightNode = bt.createLeafNode(runTo, stopRunTo)
     runRightNode.name = "run right"
@@ -57,6 +63,7 @@ function PlayScene:onEnter()
 
     self.ninjia[1].bt_root = selectorNode
     print("end of create behavior tree")
+    --]]
     -- end of create behavior tree
 end
 

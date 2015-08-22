@@ -89,6 +89,13 @@ function M.stopJump(ninjia)
     M.setState(ninjia, "Idle")
 end
 
+function M.idle(ninjia)
+    ninjia.v.x, ninjia.v.y = 0, 0
+    ninjia.a.x, ninjia.a.y = 0, 0
+    ninjia.speed = 0
+    M.setState(ninjia, "Idle")
+end
+
 --direction {x, y} vector
 function M.run(ninjia, direction)
     --only left right for now

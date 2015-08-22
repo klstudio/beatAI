@@ -1,9 +1,11 @@
 local M={}
+local GameConf = require "app.GameConfig"
 local nj=require "app.ninjia"
 --local bt=require "app.BehaviorTree"
 
 
---[[AI Actions
+--[[
+    AI Actions
     runTo
     jump
 --]]
@@ -44,7 +46,7 @@ function M.getAction(action, param)
         local pos = param.position
         local ninjia_px, ninjia_py = ninjia.sprite:getPosition()
 
-        if reachedPosition(ninjia, pos) then
+        if reachedPosition(param.ninjia, pos) then
             --stop run
             nj.stopRun(ninjia)
             return "Success"
@@ -88,13 +90,25 @@ function M.getAction(action, param)
         nj.stopJump(ninjia)
     end
 
-    local function _idleFor() -- idle for param.t amount of time 
+    local function _idleFor() -- idle for param.t amount of time in milliseconds
+        if ninjia.state ~= "Idle" then
+            nj.idle(ninjia)
+        end
+
+        if param.time and param.time > 0 then
+            param.time = param.time - GameConf.frameTime
+            return "Running"
+        end
+
+        return "Success"
     end
 
     if action == "runTo" then
         return _runTo, _stopRunTo
     elseif action == "jump" then
         return _jump, _stopJump
+    elseif action == "idelFor" then
+        return _idleFor, nil
     end
 end
 
@@ -113,6 +127,7 @@ function M.getValidate(condition, param)
         return _closeToHole
     end
 end
+
 
 return M
 

@@ -15,11 +15,18 @@ node = {
        }
 --]]
 
+-- failure on validation means just to skip that node
 local function printNode(node)
     print("node = { ")
     print("        name = ", node.name)
     print("        type = ", node.type)
     print("        state = ", node.state)
+    if node.child then
+        local i = 1
+        for i = 1, #(node.child) do
+            print("     child[", i, "].name = ", node.child[i].name)
+        end
+    end
     print("       }")
 end
 
@@ -32,8 +39,8 @@ local function validate( node )
 end
 
 function M.tick( node )
-    --print("tick node ------->")
-    --printNode(node)
+    print("tick node ------->")
+    printNode(node)
     return node.tick(node)
 end
 
