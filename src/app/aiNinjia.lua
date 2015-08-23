@@ -23,15 +23,18 @@ end
 
 local function reachedPosition(ninjia, pos)
     local px, py = ninjia.sprite:getPosition()
-    local bounds = { lb = { x = px-10, y = py-10 },
-                     rt = { x = px+10, y = py+10 },
+    local bounds = { lb = { x = px-25, y = py-25 },
+                     rt = { x = px+25, y = py+25 },
                    }
-    if not pos.y  then
-        pos.y = py
-    elseif not pos.x  then
-        pos.x = px
+    local p = {x=pos.x, y = pos.y}
+    --print("reachedPosition point.y ", pos.y, " point.x ", pos.x)
+    --print("reachedPosition ninjia pos.x ", px, " pos.y ", py)
+    if not p.y  then
+        p.y = py
+    elseif not p.x  then
+        p.x = px
     end
-    return containsPoint(bounds, pos)
+    return containsPoint(bounds, p)
 end
 
 -- action: name of action in string
@@ -48,6 +51,7 @@ function M.getAction(action, param)
 
         if reachedPosition(param.ninjia, pos) then
             --stop run
+            --print("Run to returns success")
             nj.stopRun(ninjia)
             return "Success"
         end
@@ -55,7 +59,9 @@ function M.getAction(action, param)
         --if not in run state or direction is not the same, set running towards position
         if ninjia.state ~= "Run"  then
             --print("start run to ", pos.x, ", ", pos.y)
-            local direction = { x = pos.x - ninjia_px, y = pos.y-ninjia_py}
+            local px = pos.x or ninjia_px
+            local py = pos.y or ninjia_py
+            local direction = { x = px - ninjia_px, y = py - ninjia_py }
             nj.run(ninjia, direction)
         end
 

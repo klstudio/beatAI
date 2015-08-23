@@ -39,8 +39,8 @@ local function validate( node )
 end
 
 function M.tick( node )
-    print("tick node ------->")
-    printNode(node)
+    --print("tick node ------->")
+    --printNode(node)
     return node.tick(node)
 end
 
@@ -81,11 +81,41 @@ local function tickLeaf( node )
         node.state = "Inactive"
     end
 
+    if ret == "Success" then print(node.name, " returning success") end
     return ret 
 end
 
---selector (priority 'or')
-local function tickSelector( node )
+-- Decorators
+local function tickForceFailure( node )
+    local ret 
+    ret = M.tick( node.child )
+    if ret == "Running" then
+        node.state = "Active"
+    else
+        ret = "Failure"
+        node.state = "Inactive"
+    end
+    return ret
+end
+
+local function tickLoopTillSuccess( node )
+    local ret
+    ret = M.tick( node.child )
+    if ret == "Running" then
+        node.state = "Active"
+    elseif ret == "Failure" then
+        print(node.child.name, " returns failure, keep running")
+        ret = "Running"
+        node.state = "Active"
+    elseif ret == "Success" then
+        node.state = "Inactive"
+    end
+    return ret
+end
+
+--Composites
+--priority: always validate following priority order and run the first that's validated
+local function tickPriority( node )
     local i = 1
     local validatedChild = nil
     local ret = nil
@@ -163,7 +193,10 @@ local function tickSequence( node )
     return ret
 end
 
-
+local function validateSequence(node)
+    if not node.child then return false end
+    return validate(node.child[1])
+end
 
 function M.addNode(parent, node)
     assert(parent.type ~= leaf)
@@ -174,6 +207,21 @@ function M.addNode(parent, node)
     c[#c+1] = node
 
     return parent
+end
+
+
+local function validatePriority(node)
+    local i = 1
+
+    if not node.child then return false end
+    for i = 1, #(node.child) do
+        if validate( node.child[i] ) then return true end
+    end
+    return false
+end
+
+local function validateDecorator(node)
+    return validate(node.child)
 end
 
 function M.createLeafNode(action, stopAction, validate)
@@ -190,6 +238,26 @@ function M.createLeafNode(action, stopAction, validate)
     return node
 end
 
+function M.createDecorator(type, validate, childNode)
+    local node = {}
+    assert( childNode ~= nil)
+    node.type = type
+    node.activeChild = nil
+    node.child=childNode
+    node.state = "Inactive"
+    node.action = nil
+    node.stopAction = nil
+    node.validate = validate or validateDecorator
+
+    if type == "ForceFailure" then
+        node.tick = tickForceFailure
+    elseif type == "LoopTillSuccess" then
+        node.tick = tickLoopTillSuccess
+    end
+
+    return node
+end
+
 function M.createComposite(type, validate, ...)
     local node = {}
     node.type = type
@@ -198,12 +266,21 @@ function M.createComposite(type, validate, ...)
     node.state = "Inactive"
     node.action = nil
     node.stopAction = nil
-    node.validate = validate
 
     if type == "Sequence" then
         node.tick = tickSequence
-    elseif type == "Selector" then
-        node.tick = tickSelector
+        if validate then
+            node.validate = validate
+        else
+            node.validate = validateSequence
+        end
+    elseif type == "Priority" then
+        node.tick = tickPriority
+        if validate then
+            node.validate = validate
+        else
+            node.validate = validatePriority
+        end
     end
 
     for i, v in ipairs{...} do
@@ -212,7 +289,6 @@ function M.createComposite(type, validate, ...)
 
     return node
 end
-
 
 return M
 
