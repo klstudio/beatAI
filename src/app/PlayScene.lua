@@ -95,6 +95,9 @@ function PlayScene:loadLevelMap(levelId)
     --]]
     local metaLayer = map:getLayer("meta")
     metaLayer:setVisible(false)
+
+    local actionLayer = map:getLayer("action")
+    actionLayer:setVisible(false)
 end
 
 function PlayScene:onCreate()
@@ -123,12 +126,6 @@ function PlayScene:onCreate()
 
     -- register touch handler
     local function onTouchesBegan(touches, event)
-        if self.dummy_hole == false then
-            self.dummy_hole = true
-        else
-            self.dummy_hole = false
-        end
-        print("onTouchesBegan dummy_hole ", self.dummy_hole)
     end
 
     local listener = cc.EventListenerTouchAllAtOnce:create()    

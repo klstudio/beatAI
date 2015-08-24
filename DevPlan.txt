@@ -1,19 +1,19 @@
 Doing:
-* static collision test first
-* collision detection and simple behaviour tree
-* simple map run to a point -> jump -> run to treasure box
-* AI: avoid collision of dynamic star
+* loading ai and level scripts
 
 To Do:
 - dynamic collision test
-- basic map and ai architecture
-- loading ai and level scripts
-- demo ninjia sprite following ai script
+-- AI: avoid collision of dynamic star
 
 
 Done:
 -- investigating AI technique and integration
 -- behavior tree framework
+-- static collision test first
+-- collision detection and simple behaviour tree
+-- simple map run to a point -> jump -> run to treasure box
+-- demo ninjia sprite following ai script
+-- basic map and ai architecture
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
