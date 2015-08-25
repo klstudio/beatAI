@@ -176,6 +176,25 @@ function M._checkGround(ninjia, world)
     return checkGround(ninjia, world, ninjiaPos) 
 end
 
+function M.processtouch(ninjia, world, touchPos)
+    local map = world.levelMap
+    local tile, tx, ty = getTileForPosition(map, touchPos, "action")
+    print("touch tile ", tile, " tx ", tx, " ty ", ty)
+    if tile then
+        local actionLayer = map:getLayer("action")
+        local gid = actionLayer:getTileGIDAt(cc.p(tx,ty))
+        local property = map:getPropertiesForGID(gid)
+        if property["destructible"] then 
+           -- remove this tile from all layers 
+           actionLayer:removeTileAt( cc.p(tx,ty) )
+           local metaLayer = map:getLayer("meta")
+           metaLayer:removeTileAt( cc.p(tx,ty) )
+           local levelLayer = map:getLayer("levelmap")
+           levelLayer:removeTileAt( cc.p(tx,ty) )
+        end
+    end
+end
+
 -- move ninjia for n frame based on current p, v, a
 function M.updatePhysics(ninjia, world, n)
     local px, py = ninjia.sprite:getPosition()
@@ -198,7 +217,6 @@ function M.updatePhysics(ninjia, world, n)
     elseif bumpWall == "top" then
     end
     
-
     if checkGround(ninjia, world, newPos ) then
         ninjia.a.y = 0
         ninjia.v.y = 0
@@ -208,6 +226,9 @@ function M.updatePhysics(ninjia, world, n)
         ninjia.a.y = -0.3
     end
 
+    --temporary game over condition
+    if newPos.y < 0 then
+    end
 
     M.setPosition(ninjia, cc.p(newPos.x, newPos.y) )
 end

@@ -126,6 +126,9 @@ function PlayScene:onCreate()
 
     -- register touch handler
     local function onTouchesBegan(touches, event)
+          local touchLocation = touches[1]:getLocation()
+          print("Touch event pos.x ", touchLocation.x, " pos.y ", touchLocation.y)
+          nj.processTouch(self.ninjia[1], self, touchLocation)
     end
 
     local listener = cc.EventListenerTouchAllAtOnce:create()    

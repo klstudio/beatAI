@@ -138,6 +138,10 @@ function M.checkGround( ninjia, world )
     return physicsNinjia._checkGround( ninjia, world)
 end
 
+function M.processTouch( ninjia, world, touchPos)
+    physicsNinjia.processtouch(ninjia, world, touchPos)
+end
+
 function M.think(ninjia, world, dt)
     --All sorts of events check
         --collision test
