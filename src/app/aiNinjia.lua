@@ -96,13 +96,13 @@ function M.getAction(action, param)
         nj.stopJump(ninjia)
     end
 
-    local function _idleFor() -- idle for param.t amount of time in milliseconds
+    local function _idleFor() -- idle for param.time amount of time in number of frames
         if ninjia.state ~= "Idle" then
             nj.idle(ninjia)
         end
 
         if param.time and param.time > 0 then
-            param.time = param.time - GameConf.frameTime
+            param.time = param.time - 1
             return "Running"
         end
 
@@ -113,7 +113,7 @@ function M.getAction(action, param)
         return _runTo, _stopRunTo
     elseif action == "jump" then
         return _jump, _stopJump
-    elseif action == "idelFor" then
+    elseif action == "idleFor" then
         return _idleFor, nil
     end
 end

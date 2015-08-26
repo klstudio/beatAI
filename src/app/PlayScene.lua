@@ -20,11 +20,23 @@ local PlayScene = class("PlayScene", cc.load("mvc").ViewBase)
 function PlayScene:runFrame(dt)
     -- like doom 3 code game loop is AI driven
 
+    --check ninjia state
+    if self.ninjia[1].state == "Dead" then
+        self:onNinjiaDead()
+        return
+    end
+
+    if self.ninjia[1].state == "Success" then
+        self:onNinjiaSuccess()
+        return
+    end
+
     --player think first
     nj.think(self.ninjia[1], self, dt)
 
     --other enities
     
+
     return self
 end
 
@@ -72,6 +84,40 @@ function PlayScene:onExit()
     self.ninjia[1].bt_root = nil
 end
 
+function PlayScene:onNinjiaDead()
+    local text = string.format("Level Completed")
+    nj.setState(self.ninjia[1], "Dead")
+    cc.Label:createWithSystemFont(text, "Arial", 96)
+        :align(display.CENTER, display.center)
+        :addTo(self, 20)
+
+    -- add exit button
+    local exitButton = cc.MenuItemImage:create("ExitButton.png", "ExitButton.png")
+        :onClicked(function()
+            self:getApp():enterScene("MainScene")
+        end)
+    cc.Menu:create(exitButton)
+        :move(display.cx, display.cy - 200)
+        :addTo(self, 20)
+end
+
+function PlayScene:onNinjiaSuccess()
+    -- add game over text
+    local text = string.format("Level Failed")
+    cc.Label:createWithSystemFont(text, "Arial", 100)
+        :align(display.CENTER, display.center)
+        :addTo(self, 20)
+
+    -- add exit button
+    local exitButton = cc.MenuItemImage:create("ExitButton.png", "ExitButton.png")
+        :onClicked(function()
+            self:getApp():enterScene("MainScene")
+        end)
+    cc.Menu:create(exitButton)
+        :move(display.cx, display.cy - 200)
+        :addTo(self, 20)
+end
+
 function PlayScene:loadLevelMap(levelId)
     local map = cc.TMXTiledMap:create("level1.tmx")
     self:addChild(map, 10)
@@ -113,8 +159,8 @@ function PlayScene:onCreate()
     -- To Do: release sprite
     self.ninjia[1] = nj.new(1)
 
-    self:addChild( self.ninjia[1].sprite, 20)
-    nj.setPosition( self.ninjia[1], cc.p( 50, s.height-150) )
+    self:addChild( self.ninjia[1].sprite, 50)
+    nj.setPosition( self.ninjia[1], cc.p( 50, s.height-200) )
 
     --nj.setState( self.ninjia[1], "Idle" )
     nj.setState( self.ninjia[1], "Idle" )
@@ -139,8 +185,9 @@ function PlayScene:onCreate()
     --listener:registerScriptHandler(onTouchesMoved,cc.Handler.EVENT_TOUCHES_MOVED )
     self:loadLevelMap(1)
 
-
 end
+
+
 
 return PlayScene
 

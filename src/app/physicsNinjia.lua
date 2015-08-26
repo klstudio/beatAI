@@ -91,6 +91,7 @@ local function checkWalls(ninjia, world, newPos)
         newPos.y = b - s.height/2 
         return "top"
     end
+
     return nil
 end
 
@@ -216,7 +217,7 @@ function M.updatePhysics(ninjia, world, n)
         if ninjia.a.x < 0 then ninjia.a.x = 0 end
     elseif bumpWall == "top" then
     end
-    
+
     if checkGround(ninjia, world, newPos ) then
         ninjia.a.y = 0
         ninjia.v.y = 0
@@ -228,6 +229,7 @@ function M.updatePhysics(ninjia, world, n)
 
     --temporary game over condition
     if newPos.y < 0 then
+       ninjia.state = "Dead"
     end
 
     M.setPosition(ninjia, cc.p(newPos.x, newPos.y) )

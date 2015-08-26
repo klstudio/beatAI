@@ -25,6 +25,14 @@ local function RunTo(px, py)
     return runToNode
 end
 
+local function IdleFor(t)   -- t frames
+    local param = { ninjia = M.ninjia, world = M.world, time = t}
+    local idleFor, stopIdleFor = aiNinjia.getAction("idleFor", param)
+    local idleForNode = bt.createLeafNode( idleFor, stopIdleFor)
+    idleForNode.name = "idle for "..t
+    return idleForNode
+end
+
 local function Jump()
     local param = { ninjia = M.ninjia, world = M.world }
     local jump, stopJump = aiNinjia.getAction("jump", param)
@@ -70,6 +78,7 @@ local function Sequence(...)
     return seqNode
 end
 --end of composite
+--[[
 function M.aiGetBehaviorTree()
     return Sequence(   
                        LoopTillSuccess(
@@ -88,6 +97,22 @@ function M.aiGetBehaviorTree()
                                                        RunTo(150, nil)
                                                    )
                                        )
+                   )
+end
+--]]
+
+function M.aiGetBehaviorTree()
+    local t = math.random(180, 300)
+    return Sequence(   
+                       IdleFor( 300 ), 
+                       LoopTillSuccess(
+                                           Priority(   
+                                                       ForceFailure(
+                                                                       JumpHole()
+                                                                    ),
+                                                       RunTo(1088, nil) 
+                                                   )
+                                      )
                    )
 end
 

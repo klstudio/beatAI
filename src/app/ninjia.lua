@@ -71,7 +71,7 @@ end
 
 
 function M.jump(ninjia)
-    ninjia.speed = 8
+    ninjia.speed = 10.2
     if ninjia.orientation == "right" then
         ninjia.v.x, ninjia.v.y = 5, ninjia.speed
     else
@@ -91,7 +91,7 @@ end
 
 function M.idle(ninjia)
     ninjia.v.x, ninjia.v.y = 0, 0
-    ninjia.a.x, ninjia.a.y = 0, 0
+    --ninjia.a.x, ninjia.a.y = 0, 0
     ninjia.speed = 0
     M.setState(ninjia, "Idle")
 end
@@ -124,8 +124,8 @@ function M.setPosition( ninjia, p )
 end
 
 function M.stopRun(ninjia)
-    ninjia.v.x, ninjia.v.y = 0, 0
-    ninjia.a.x, ninjia.a.y = 0, 0
+    ninjia.v.x = 0 
+    --ninjia.a.x, ninjia.a.y = 0, 0
     ninjia.speed = 0
     M.setState(ninjia, "Idle")
 end
@@ -148,7 +148,10 @@ function M.think(ninjia, world, dt)
     --evaluate btree
     -- if there's event, abort last and evaluate the tree from beginnning
     --print("ninjia - think")
-    bt.tick(ninjia.bt_root)
+    local aiStatus = bt.tick(ninjia.bt_root)
+    if aiStatus == "Success" then
+        ninjia.state = "Success"
+    end
 
     --update ninjia physics
     physicsNinjia.updatePhysics(ninjia,world, 1)
@@ -176,5 +179,13 @@ initAnimation("Jump", function (i)
                         return cache:getSpriteFrame( string.format("Jump__%03d.png", i) )
                        end,
                0.2
+             )
+initAnimation("Dead", function (i)
+                        return cache:getSpriteFrame( string.format("Idle__%03d.png", i) )
+                      end
+             )
+initAnimation("Success", function (i)
+                        return cache:getSpriteFrame( string.format("Idle__%03d.png", i) )
+                      end
              )
 return M
